@@ -1,0 +1,19 @@
+name: MoneyPouch
+
+# This will be replaced with the property "release.version" in pom.xml upon build.
+version: %PLUGIN_VERSION%
+
+main: com.leonardobishop.moneypouch.MoneyPouch
+author: LMBishop
+softdepend: [Vault]
+
+commands:
+  moneypouch:
+    description: Main command for MoneyPouch
+    usage: /moneypouch
+    permission: moneypouch.admin
+    aliases: [mp]
+
+permissions:
+  moneypouch.admin:
+    description: Permission for the base command

@@ -1,0 +1,83 @@
+pouches:
+  tier:
+    # Define pouches here
+    vault-1:
+      name: "&2&lTier I Money Pouch &r&7(Right Click)"
+      item: "ENDER_CHEST"
+      pricerange:
+        from: 1000
+        to: 10000
+      options:
+        economytype: "VAULT"
+      lore:
+        - "&7Open this pouch to receive money!"
+    
+    vault-2:
+      name: "&c&lTier II Money Pouch &r&7(Right Click)"
+      item: "ENDER_CHEST"
+      pricerange:
+        from: 10001
+        to: 50000
+      options:
+        economytype: "VAULT"        
+      lore:
+        - "&7Open this pouch to receive money!"
+    
+    vault-3:
+      name: "&6&lTier III Money Pouch &r&7(Right Click)"
+      item: "ENDER_CHEST"
+      pricerange:
+        from: 50001
+        to: 200000
+      options:
+        economytype: "VAULT"        
+      lore:
+        - "&7Open this pouch to receive money!"
+
+    xp-1:
+      name: "&6&lTier I XP Pouch &r&7(Right Click)"
+      item: "CHEST"
+      pricerange:
+        from: 20
+        to: 400
+      options:
+        economytype: "XP"
+      lore:
+        - "&7Open this pouch to receive experience!"
+
+  # Sound settings (!!!!!!! MUST change for pre-1.9 !!!!!!!)
+  sound:
+    enabled: true
+    opensound: "BLOCK_CHEST_OPEN"       # (CHEST_OPEN  pre-1.9)
+    revealsound: "BLOCK_ANVIL_LAND"     # (ANVIL_LAND  pre-1.9)
+    endsound: "ENTITY_GENERIC_EXPLODE"  # (EXPLODE  pre-1.9)
+
+  # Title settings (will not work before 1.8, timings will not work before 1.10)
+  title:
+    speed-in-tick: 10
+    subtitle: "&eOpening pouch..."
+    obfuscate-colour: "&5"
+    reveal-colour: "&6"
+    prefix-colour: "&a"
+    suffix-colour: "&a"
+
+# Rather than showing each digit left-to-right, reveal it right-to-left
+reverse-pouch-reveal: true
+
+# Economy prefixes and suffixes
+economy:
+  prefixes:
+    vault: "$"
+    xp: ""
+  suffixes:
+    vault: ""
+    xp: " XP"
+
+# Messages here
+messages:
+  full-inv: "&c%player%'s inventory is full!"
+  give-item: "&6Given &e%player% %item%&6."
+  receive-item: "&6You have been given %item%&6."
+  prize-message: "&6You have received &c%prefix%%prize%%suffix%&6!"
+  aready-opening: "&cPlease wait for your current pouch opening to complete first!"
+
