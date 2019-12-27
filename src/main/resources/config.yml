@@ -60,6 +60,11 @@ pouches:
     reveal-colour: "&6"
     prefix-colour: "&a"
     suffix-colour: "&a"
+    obfuscate-digit-char: "#"
+    obfuscate-format-char: "|"
+    format:               # (adds commas e.g   $1,924,281)
+      enabled: false
+      reveal-comma: true  # the commas will already be revealed when opening
 
 # Rather than showing each digit left-to-right, reveal it right-to-left
 reverse-pouch-reveal: true
@@ -80,4 +85,3 @@ messages:
   receive-item: "&6You have been given %item%&6."
   prize-message: "&6You have received &c%prefix%%prize%%suffix%&6!"
   aready-opening: "&cPlease wait for your current pouch opening to complete first!"
-

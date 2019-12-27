@@ -13,6 +13,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -71,7 +72,12 @@ public class UseEvent implements Listener {
                     plugin.getConfig().getString("pouches.title.reveal-colour"));
             String obfuscateColour = ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("pouches.title.obfuscate-colour"));
-            String number = String.valueOf(random);
+            String obfuscateDigitChar = plugin.getConfig().getString("pouches.title.obfuscate-digit-char", "#");
+            String obfuscateDelimiterChar = ",";
+            boolean delimiter = plugin.getConfig().getBoolean("pouches.title.format.enabled", false);
+            boolean revealComma = plugin.getConfig().getBoolean("pouches.title.format.reveal-comma", false);
+            String number = (delimiter ? (new DecimalFormat("#,###").format(random)) : String.valueOf(random));
+            boolean reversePouchReveal = plugin.getConfig().getBoolean("reverse-pouch-reveal");
 
             @Override
             public void run() {
@@ -81,17 +87,32 @@ public class UseEvent implements Listener {
                     StringBuilder viewedTitle = new StringBuilder();
                     String suffix = suffixColour + p.getEconomyType().getSuffix();
                     for (int i = 0; i < position; i++) {
-                        if (plugin.getConfig().getBoolean("reverse-pouch-reveal")) {
+                        if (reversePouchReveal) {
                             viewedTitle.insert(0, number.charAt(number.length() - i - 1)).insert(0, revealColour);
                         } else {
                             viewedTitle.append(revealColour).append(number.charAt(i));
                         }
+                        if ((i == (position - 1)) && (position != number.length())
+                                && (reversePouchReveal
+                                ? (revealComma && (number.charAt(number.length() - i - 1)) == ',')
+                                : (revealComma && (number.charAt(i + 1)) == ','))) {
+                            position++;
+                        }
                     }
                     for (int i = position; i < number.length(); i++) {
-                        if (plugin.getConfig().getBoolean("reverse-pouch-reveal")) {
-                            viewedTitle.insert(0, "#").insert(0, ChatColor.MAGIC).insert(0, obfuscateColour);
+                        if (reversePouchReveal) {
+                            char at = number.charAt(number.length() - i - 1);
+                            if (at == ',')  {
+                                if (revealComma) {
+                                    viewedTitle.insert(0, at).insert(0, revealColour);
+                                } else viewedTitle.insert(0, obfuscateDelimiterChar).insert(0, ChatColor.MAGIC).insert(0, obfuscateColour);
+                            } else viewedTitle.insert(0, obfuscateDigitChar).insert(0, ChatColor.MAGIC).insert(0, obfuscateColour);;
                         } else {
-                            viewedTitle.append(obfuscateColour).append(ChatColor.MAGIC).append("#");
+                            char at = number.charAt(i);
+                            if (at == ',') {
+                                if (revealComma) viewedTitle.append(revealColour).append(at);
+                                else viewedTitle.append(obfuscateColour).append(ChatColor.MAGIC).append(obfuscateDelimiterChar);
+                            } else viewedTitle.append(obfuscateColour).append(ChatColor.MAGIC).append(obfuscateDigitChar);
                         }
                     }
                     plugin.getTitleHandle().sendTitle(player, prefix + viewedTitle.toString() + suffix,
