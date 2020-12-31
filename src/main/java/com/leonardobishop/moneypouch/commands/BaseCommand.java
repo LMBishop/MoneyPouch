@@ -7,9 +7,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-public class BaseCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class BaseCommand implements CommandExecutor, TabCompleter {
 
     private MoneyPouch plugin;
 
@@ -102,5 +108,20 @@ public class BaseCommand implements CommandExecutor {
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp list :" + ChatColor.GRAY + " list all pouches");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp reload :" + ChatColor.GRAY + " reload the config");
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+        if (sender instanceof Player) {
+            List<String> pouchNames = new ArrayList<>();
+            for (Pouch pouch : plugin.getPouches()) {
+                pouchNames.add(pouch.getId());
+            }
+            List<String> completions = new ArrayList<>();
+            StringUtil.copyPartialMatches(args[0], pouchNames, completions);
+            Collections.sort(completions);
+            return completions;
+        }
+        return null;
     }
 }

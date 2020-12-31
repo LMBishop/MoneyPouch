@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -58,31 +59,39 @@ public class UseEvent implements Listener {
         }
     }
 
+    private void playSound(Player player, String name) {
+        try {
+            player.playSound(player.getLocation(), Sound.valueOf(name), 3, 1);
+        } catch (Exception ignored) { }
+    }
+
     private void usePouch(Player player, Pouch p) {
         opening.add(player.getUniqueId());
         long random = ThreadLocalRandom.current().nextLong(p.getMinRange(), p.getMaxRange());
-        player.playSound(player.getLocation(), Sound.valueOf(plugin.getConfig().getString("pouches.sound.opensound")), 3, 1);
+        playSound(player, plugin.getConfig().getString("pouches.sound.opensound"));
         new BukkitRunnable() {
-            int position = 0;
-            String prefixColour = ChatColor.translateAlternateColorCodes('&',
+            final String prefixColour = ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("pouches.title.prefix-colour"));
-            String suffixColour = ChatColor.translateAlternateColorCodes('&',
+            final String suffixColour = ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("pouches.title.suffix-colour"));
-            String revealColour = ChatColor.translateAlternateColorCodes('&',
+            final String revealColour = ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("pouches.title.reveal-colour"));
-            String obfuscateColour = ChatColor.translateAlternateColorCodes('&',
+            final String obfuscateColour = ChatColor.translateAlternateColorCodes('&',
                     plugin.getConfig().getString("pouches.title.obfuscate-colour"));
-            String obfuscateDigitChar = plugin.getConfig().getString("pouches.title.obfuscate-digit-char", "#");
-            String obfuscateDelimiterChar = ",";
-            boolean delimiter = plugin.getConfig().getBoolean("pouches.title.format.enabled", false);
-            boolean revealComma = plugin.getConfig().getBoolean("pouches.title.format.reveal-comma", false);
-            String number = (delimiter ? (new DecimalFormat("#,###").format(random)) : String.valueOf(random));
-            boolean reversePouchReveal = plugin.getConfig().getBoolean("reverse-pouch-reveal");
+            final String obfuscateDigitChar = plugin.getConfig().getString("pouches.title.obfuscate-digit-char", "#");
+            final String obfuscateDelimiterChar = ",";
+            final boolean delimiter = plugin.getConfig().getBoolean("pouches.title.format.enabled", false);
+            final boolean revealComma = plugin.getConfig().getBoolean("pouches.title.format.reveal-comma", false);
+            final String number = (delimiter ? (new DecimalFormat("#,###").format(random)) : String.valueOf(random));
+            final boolean reversePouchReveal = plugin.getConfig().getBoolean("reverse-pouch-reveal");
+
+            int position = 0;
+            boolean complete = false;
 
             @Override
             public void run() {
                 if (!(plugin.getTitleHandle() instanceof Title_Other) && player.isOnline()) {
-                    player.playSound(player.getLocation(), Sound.valueOf(plugin.getConfig().getString("pouches.sound.revealsound")), 3, 1);
+                    playSound(player, plugin.getConfig().getString("pouches.sound.revealsound"));
                     String prefix = prefixColour + p.getEconomyType().getPrefix();
                     StringBuilder viewedTitle = new StringBuilder();
                     String suffix = suffixColour + p.getEconomyType().getSuffix();
@@ -122,14 +131,19 @@ public class UseEvent implements Listener {
                     position = number.length();
                 }
                 if (position == number.length()) {
+                    if (complete) {    // prevent running twice
+                        return;
+                    }
+                    complete = true;
+
                     opening.remove(player.getUniqueId());
                     this.cancel();
                     if (player.isOnline()) {
-                        player.playSound(player.getLocation(), Sound.valueOf(plugin.getConfig().getString("pouches.sound.endsound")), 3, 1);
+                        playSound(player, plugin.getConfig().getString("pouches.sound.endsound"));
                         player.sendMessage(plugin.getMessage(MoneyPouch.Message.PRIZE_MESSAGE)
                                 .replace("%prefix%", p.getEconomyType().getPrefix())
                                 .replace("%suffix%", p.getEconomyType().getSuffix())
-                                .replace("%prize%", String.valueOf(random)));
+                                .replace("%prize%", NumberFormat.getInstance().format(random)));
                     }
                     try {
                         p.getEconomyType().processPayment(player, random);

@@ -1,15 +1,11 @@
 package com.leonardobishop.moneypouch;
 
-import com.google.common.io.ByteStreams;
 import com.leonardobishop.moneypouch.commands.BaseCommand;
 import com.leonardobishop.moneypouch.economytype.EconomyType;
 import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
 import com.leonardobishop.moneypouch.economytype.XPEconomyType;
 import com.leonardobishop.moneypouch.events.UseEvent;
-import com.leonardobishop.moneypouch.title.Title;
-import com.leonardobishop.moneypouch.title.Title_Bukkit;
-import com.leonardobishop.moneypouch.title.Title_BukkitNoTimings;
-import com.leonardobishop.moneypouch.title.Title_Other;
+import com.leonardobishop.moneypouch.title.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -63,7 +59,12 @@ public class MoneyPouch extends JavaPlugin {
                 config.createNewFile();
                 try (InputStream in = MoneyPouch.class.getClassLoader().getResourceAsStream("config.yml")) {
                     OutputStream out = new FileOutputStream(config);
-                    ByteStreams.copy(in, out);
+                    byte[] buffer = new byte[1024];
+                    int length = in.read(buffer);
+                    while (length != -1) {
+                        out.write(buffer, 0, length);
+                        length = in.read(buffer);
+                    }
                 } catch (IOException e) {
                     super.getLogger().severe("Failed to create config.");
                     e.printStackTrace();
@@ -163,7 +164,7 @@ public class MoneyPouch extends JavaPlugin {
             for (String key : getConfig().getStringList(path + ".enchantments")) {
                 String[] split = key.split(":");
                 String ench = split[0];
-                String level = null;
+                String level;
                 if (split.length == 2) {
                     level = split[1];
                 } else {
