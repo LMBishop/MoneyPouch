@@ -13,8 +13,8 @@ public class Pouch {
 
     public Pouch(String id, long minRange, long maxRange, ItemStack itemStack, EconomyType economyType) {
         this.id = id;
-        if (minRange > maxRange) {
-            this.minRange = maxRange + 1;
+        if (minRange >= maxRange) {
+            this.minRange = maxRange - 1;
         } else {
             this.minRange = minRange;
         }

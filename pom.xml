@@ -6,7 +6,7 @@
 
     <groupId>com.leonardobishop</groupId>
     <artifactId>moneypouch</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <name>MoneyPouch</name>
 
     <properties>
