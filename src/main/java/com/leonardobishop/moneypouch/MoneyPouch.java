@@ -2,10 +2,14 @@ package com.leonardobishop.moneypouch;
 
 import com.leonardobishop.moneypouch.commands.BaseCommand;
 import com.leonardobishop.moneypouch.economytype.EconomyType;
+import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
 import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
 import com.leonardobishop.moneypouch.economytype.XPEconomyType;
 import com.leonardobishop.moneypouch.events.UseEvent;
-import com.leonardobishop.moneypouch.title.*;
+import com.leonardobishop.moneypouch.title.Title;
+import com.leonardobishop.moneypouch.title.Title_Bukkit;
+import com.leonardobishop.moneypouch.title.Title_BukkitNoTimings;
+import com.leonardobishop.moneypouch.title.Title_Other;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,21 +31,12 @@ public class MoneyPouch extends JavaPlugin {
 
     private HashMap<String, EconomyType> economyTypes = new HashMap<>();
 
-    private EconomyType getEconomyType(String id) {
-        switch (id.toLowerCase()) {
-            case "vault":
-                if (!economyTypes.containsKey("Vault")) economyTypes.put("Vault", new VaultEconomyType(
-                                this.getConfig().getString("economy.prefixes.vault", "$"),
-                                this.getConfig().getString("economy.suffixes.vault", "")));
-                return economyTypes.get("Vault");
-            case "xp":
-                if (!economyTypes.containsKey("XP")) economyTypes.put("XP", new XPEconomyType(
-                        this.getConfig().getString("economy.prefixes.xp", ""),
-                        this.getConfig().getString("economy.suffixes.xp", " XP")));
-                return economyTypes.get("XP");
-            default:
-                return null;
-        }
+    public EconomyType getEconomyType(String id) {
+        return economyTypes.get(id.toLowerCase());
+    }
+
+    public EconomyType registerEconomyType(String id, EconomyType type) {
+        return economyTypes.put(id, type);
     }
 
     private ArrayList<Pouch> pouches = new ArrayList<>();
@@ -76,12 +71,29 @@ public class MoneyPouch extends JavaPlugin {
                 super.getLogger().severe(ChatColor.RED + "...please delete the MoneyPouch directory and try RESTARTING (not reloading).");
             }
         }
-        this.reloadConfig();
         this.setupTitle();
 
+        registerEconomyType("xp", new XPEconomyType(this,   // vv for legacy purposes
+                this.getConfig().getString("economy.xp.prefix", this.getConfig().getString("economy.prefixes.xp", "")),
+                this.getConfig().getString("economy.xp.suffix", this.getConfig().getString("economy.suffixes.xp", " XP"))));
+
+
+        if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
+            registerEconomyType("vault", new VaultEconomyType(this,
+                    this.getConfig().getString("economy.vault.prefix", this.getConfig().getString("economy.prefixes.vault", "$")),
+                    this.getConfig().getString("economy.vault.suffix", this.getConfig().getString("economy.suffixes.vault", ""))));
+        }
+
+        if (Bukkit.getServer().getPluginManager().getPlugin("LemonMobCoins") != null) {
+            registerEconomyType("lemonmobcoins", new LemonMobCoinsEconomyType(this,
+                    this.getConfig().getString("economy.lemonmobcoins.prefix", ""),
+                    this.getConfig().getString("economy.lemonmobcoins.suffix", " Mob Coins")));
+        }
 
         super.getServer().getPluginCommand("moneypouch").setExecutor(new BaseCommand(this));
         super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
+
+        Bukkit.getScheduler().runTask(this, this::reloadConfig);
     }
 
     public String getMessage(Message message) {

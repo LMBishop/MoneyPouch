@@ -1,11 +1,15 @@
 package com.leonardobishop.moneypouch.economytype;
 
+import com.leonardobishop.moneypouch.MoneyPouch;
 import org.bukkit.entity.Player;
 
 public class XPEconomyType extends EconomyType {
 
-    public XPEconomyType(String prefix, String suffix) {
+    private final MoneyPouch plugin;
+
+    public XPEconomyType(MoneyPouch plugin, String prefix, String suffix) {
         super(prefix, suffix);
+        this.plugin = plugin;
     }
 
     @Override

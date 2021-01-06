@@ -6,7 +6,7 @@
 
     <groupId>com.leonardobishop</groupId>
     <artifactId>moneypouch</artifactId>
-    <version>3.1.2</version>
+    <version>3.1.3</version>
     <name>MoneyPouch</name>
 
     <properties>
@@ -40,6 +40,14 @@
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- LemonMobCoins -->
+        <dependency>
+            <groupId>com.github.LemmoTresto</groupId>
+            <artifactId>LemonMobCoins</artifactId>
+            <version>master-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

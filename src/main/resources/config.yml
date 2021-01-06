@@ -1,3 +1,5 @@
+# Check out the wiki at https://github.com/LMBishop/MoneyPouch/wiki/Config
+
 pouches:
   tier:
     # Define pouches here
@@ -71,12 +73,15 @@ reverse-pouch-reveal: true
 
 # Economy prefixes and suffixes
 economy:
-  prefixes:
-    vault: "$"
-    xp: ""
-  suffixes:
-    vault: ""
-    xp: " XP"
+  xp:
+    prefix: ""
+    suffix: " XP"
+  vault:
+    prefix: "$"
+    suffix: ""
+  lemonmobcoins:
+    prefix: ""
+    suffix: " Mob Coins"
 
 # Messages here
 messages:

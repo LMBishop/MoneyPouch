@@ -1,5 +1,6 @@
 package com.leonardobishop.moneypouch.economytype;
 
+import com.leonardobishop.moneypouch.MoneyPouch;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,11 +10,13 @@ import java.util.logging.Level;
 
 public class VaultEconomyType extends EconomyType {
 
+    private final MoneyPouch plugin;
     private static Economy economy = null;
     private boolean fail = false;
 
-    public VaultEconomyType(String prefix, String suffix) {
+    public VaultEconomyType(MoneyPouch plugin, String prefix, String suffix) {
         super(prefix, suffix);
+        this.plugin = plugin;
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") == null) {
             fail = true;
@@ -32,7 +35,7 @@ public class VaultEconomyType extends EconomyType {
     @Override
     public void processPayment(Player player, long amount) {
         if (fail) {
-            Bukkit.getPluginManager().getPlugin("MoneyPouch").getLogger().log(Level.SEVERE, "Failed to process payment: Failed to hook Vault!");
+            plugin.getLogger().log(Level.SEVERE, "Failed to process payment: failed to hook into Vault");
             return;
         }
 
