@@ -11,10 +11,6 @@ pouches:
         to: 10000
       options:
         economytype: "VAULT"
-        shop:
-          enabled: true
-          shopeconomy: "VAULT"
-          price: 5000
       lore:
         - "&7Open this pouch to receive money!"
     
