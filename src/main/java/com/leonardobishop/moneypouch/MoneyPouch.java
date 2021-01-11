@@ -80,7 +80,7 @@ public class MoneyPouch extends JavaPlugin {
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Vault") != null) {
             registerEconomyType("vault", new VaultEconomyType(this,
-                    this.getConfig().getString("economy.vault.prefix", this.getConfig().getString("economy.prefixes.vault", "$")),
+                    this.getConfig().getString("economy.vault.prefix", this.getConfig().getString("economy.prefixes.vault", "")),
                     this.getConfig().getString("economy.vault.suffix", this.getConfig().getString("economy.suffixes.vault", ""))));
         }
 
