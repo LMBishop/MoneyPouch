@@ -52,6 +52,25 @@ public class LemonMobCoinsEconomyType extends EconomyType {
     }
 
     @Override
+    public boolean doTransaction(Player player, long amount) {
+        if (fail) {
+            return false;
+        }
+
+        try {
+            if (lemonMobCoinsClass.getCoinManager().getCoinsOfPlayer(player.getUniqueId()) < amount) {
+                return false;
+            }
+            lemonMobCoinsClass.getCoinManager().deductCoinsFromPlayer(player.getUniqueId(), amount);
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to complete transaction in shop: an unknown exception occurred");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public String toString() {
         return "LemonMobCoins";
     }

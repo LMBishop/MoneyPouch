@@ -6,6 +6,7 @@ version: %PLUGIN_VERSION%
 main: com.leonardobishop.moneypouch.MoneyPouch
 author: LMBishop
 softdepend: [Vault, TokenManager, LemonMobCoins]
+api-version: "1.13"  # enables the new material thing even though the plugin fully supports 1.8
 
 commands:
   moneypouch:
@@ -13,6 +14,10 @@ commands:
     usage: /moneypouch
     permission: moneypouch.admin
     aliases: [mp]
+  moneypouchshop:
+    description: Shop command for MoneyPouch
+    usage: /moneypouchshop
+    aliases: [mpshop]
 
 permissions:
   moneypouch.admin:

@@ -21,6 +21,7 @@ public abstract class EconomyType {
     }
 
     public abstract void processPayment(Player player, long amount);
+    public abstract boolean doTransaction(Player player, long amount);
     public abstract String toString();
 
 }

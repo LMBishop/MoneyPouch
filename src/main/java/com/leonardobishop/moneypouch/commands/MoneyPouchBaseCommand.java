@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BaseCommand implements CommandExecutor, TabCompleter {
+public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
 
     private MoneyPouch plugin;
 
-    public BaseCommand(MoneyPouch plugin) {
+    public MoneyPouchBaseCommand(MoneyPouch plugin) {
         this.plugin = plugin;
     }
 
@@ -34,7 +34,7 @@ public class BaseCommand implements CommandExecutor, TabCompleter {
                 }
                 return true;
             } else if (args[0].equals("reload")) {
-                plugin.reloadConfig();
+                plugin.reload();
                 sender.sendMessage(ChatColor.GRAY + "MoneyPouch has been reloaded");
                 return true;
             }
@@ -113,14 +113,16 @@ public class BaseCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
-            List<String> pouchNames = new ArrayList<>();
-            for (Pouch pouch : plugin.getPouches()) {
-                pouchNames.add(pouch.getId());
+            if (args.length == 1) {
+                List<String> pouchNames = new ArrayList<>();
+                for (Pouch pouch : plugin.getPouches()) {
+                    pouchNames.add(pouch.getId());
+                }
+                List<String> completions = new ArrayList<>();
+                StringUtil.copyPartialMatches(args[0], pouchNames, completions);
+                Collections.sort(completions);
+                return completions;
             }
-            List<String> completions = new ArrayList<>();
-            StringUtil.copyPartialMatches(args[0], pouchNames, completions);
-            Collections.sort(completions);
-            return completions;
         }
         return null;
     }

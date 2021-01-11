@@ -21,6 +21,15 @@ public class XPEconomyType extends EconomyType {
     }
 
     @Override
+    public boolean doTransaction(Player player, long amount) {
+        if (player.getTotalExperience() < amount) {
+            return false;
+        }
+        player.giveExp(Integer.parseInt(String.valueOf(amount)) * -1);
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "XP";
     }

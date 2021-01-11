@@ -43,6 +43,20 @@ public class VaultEconomyType extends EconomyType {
     }
 
     @Override
+    public boolean doTransaction(Player player, long amount) {
+        if (fail) {
+            plugin.getLogger().log(Level.SEVERE, "Failed to complete transaction in shop: failed to hook into Vault");
+            return false;
+        }
+
+        if (economy.getBalance(player) < amount) {
+            return false;
+        }
+        economy.withdrawPlayer(player, amount);
+        return true;
+    }
+
+    @Override
     public String toString() {
         return "Vault";
     }

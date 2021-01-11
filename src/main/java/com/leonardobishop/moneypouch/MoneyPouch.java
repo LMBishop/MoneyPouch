@@ -1,21 +1,25 @@
 package com.leonardobishop.moneypouch;
 
-import com.leonardobishop.moneypouch.commands.BaseCommand;
+import com.leonardobishop.moneypouch.commands.MoneyPouchBaseCommand;
+import com.leonardobishop.moneypouch.commands.MoneyPouchShopCommand;
 import com.leonardobishop.moneypouch.economytype.EconomyType;
 import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
 import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
 import com.leonardobishop.moneypouch.economytype.XPEconomyType;
 import com.leonardobishop.moneypouch.events.UseEvent;
+import com.leonardobishop.moneypouch.gui.MenuController;
+import com.leonardobishop.moneypouch.itemgetter.ItemGetter;
+import com.leonardobishop.moneypouch.itemgetter.ItemGetterLatest;
+import com.leonardobishop.moneypouch.itemgetter.ItemGetter_1_13;
+import com.leonardobishop.moneypouch.itemgetter.ItemGetter_Late_1_8;
 import com.leonardobishop.moneypouch.title.Title;
 import com.leonardobishop.moneypouch.title.Title_Bukkit;
 import com.leonardobishop.moneypouch.title.Title_BukkitNoTimings;
 import com.leonardobishop.moneypouch.title.Title_Other;
-import org.apache.commons.lang.StringUtils;
+import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +32,8 @@ import java.util.List;
 public class MoneyPouch extends JavaPlugin {
 
     private Title titleHandle;
+    private ItemGetter itemGetter;
+    private MenuController menuController;
 
     private HashMap<String, EconomyType> economyTypes = new HashMap<>();
 
@@ -43,6 +49,8 @@ public class MoneyPouch extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        executeVersionSpecificActions();
+
         File directory = new File(String.valueOf(this.getDataFolder()));
         if (!directory.exists() && !directory.isDirectory()) {
             directory.mkdir();
@@ -73,6 +81,13 @@ public class MoneyPouch extends JavaPlugin {
         }
         this.setupTitle();
 
+        MetricsLite metrics = new MetricsLite(this, 9927);
+        if (metrics.isEnabled()) {
+            super.getLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
+        }
+
+        menuController = new MenuController(this);
+
         registerEconomyType("xp", new XPEconomyType(this,   // vv for legacy purposes
                 this.getConfig().getString("economy.xp.prefix", this.getConfig().getString("economy.prefixes.xp", "")),
                 this.getConfig().getString("economy.xp.suffix", this.getConfig().getString("economy.suffixes.xp", " XP"))));
@@ -90,10 +105,12 @@ public class MoneyPouch extends JavaPlugin {
                     this.getConfig().getString("economy.lemonmobcoins.suffix", " Mob Coins")));
         }
 
-        super.getServer().getPluginCommand("moneypouch").setExecutor(new BaseCommand(this));
+        super.getServer().getPluginCommand("moneypouch").setExecutor(new MoneyPouchBaseCommand(this));
+        super.getServer().getPluginCommand("moneypouchshop").setExecutor(new MoneyPouchShopCommand(this));
         super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
+        super.getServer().getPluginManager().registerEvents(menuController, this);
 
-        Bukkit.getScheduler().runTask(this, this::reloadConfig);
+        Bukkit.getScheduler().runTask(this, this::reload);
     }
 
     public String getMessage(Message message) {
@@ -109,93 +126,78 @@ public class MoneyPouch extends JavaPlugin {
         return titleHandle;
     }
 
-    @Override
-    public void reloadConfig() {
+    private void executeVersionSpecificActions() {
+        String version;
+        try {
+            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            getLogger().warning("Failed to resolve server version - some features will not work!");
+            itemGetter = new ItemGetter_Late_1_8();
+            return;
+        }
+
+        getLogger().info("Your server is running version " + version + ".");
+        if (version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
+                || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12")) {
+            itemGetter = new ItemGetter_Late_1_8();
+        } else if (version.startsWith("v1_13")) {
+            itemGetter = new ItemGetter_1_13();
+        } else {
+            itemGetter = new ItemGetterLatest();
+        }
+    }
+
+    public MenuController getMenuController() {
+        return menuController;
+    }
+
+    public void reload() {
         super.reloadConfig();
 
         pouches.clear();
         for (String s : this.getConfig().getConfigurationSection("pouches.tier").getKeys(false)) {
             ItemStack is = getItemStack("pouches.tier." + s, this.getConfig());
             String economyTypeId = this.getConfig().getString("pouches.tier." + s + ".options.economytype", "VAULT");
+            String id = s.replace(" ", "_");
             long priceMin = this.getConfig().getLong("pouches.tier." + s + ".pricerange.from", 0);
             long priceMax = this.getConfig().getLong("pouches.tier." + s + ".pricerange.to", 0);
 
             EconomyType economyType = getEconomyType(economyTypeId);
             if (economyType == null) economyType = getEconomyType("VAULT");
 
-            pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType));
+            //shop
+            boolean purchasable = this.getConfig().contains("shop.purchasable-items." + s);
+            if (purchasable) {
+                long price = this.getConfig().getLong("shop.purchasable-items." + s + ".price", 0);
+                String purchaseEconomyId = this.getConfig().getString("shop.purchasable-items." + s + ".currency", "VAULT");
+                EconomyType purchaseEconomy = getEconomyType(purchaseEconomyId);
+
+                if (purchaseEconomy == null) purchaseEconomy = getEconomyType("VAULT");
+
+                ItemStack shopIs = getItemStack("pouches.tier." + s, this.getConfig());
+                ItemMeta shopIsm = shopIs.getItemMeta();
+                List<String> shopIsLore = new ArrayList<>();
+                if (shopIsm.getLore() != null) {
+                    shopIsLore.addAll(shopIsm.getLore());
+                }
+                for (String shopLore : this.getConfig().getStringList("shop.append-to-lore")) {
+                    shopIsLore.add(ChatColor.translateAlternateColorCodes('&', shopLore)
+                            .replace("%price%", String.valueOf(price))
+                            .replace("%prefix%", purchaseEconomy.getPrefix())
+                            .replace("%suffix%", purchaseEconomy.getSuffix()));
+                }
+                shopIsm.setLore(shopIsLore);
+                shopIs.setItemMeta(shopIsm);
+
+                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType, purchasable, purchaseEconomy, price, shopIs));
+            } else {
+                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType));
+            }
         }
     }
 
     public ItemStack getItemStack(String path, FileConfiguration config) {
-        String cName = config.getString(path + ".name", path + ".name");
-        String cType = config.getString(path + ".item", path + ".item");
-        List<String> cLore = config.getStringList(path + ".lore");
-
-        String name;
-        Material type = null;
-        int data = 0;
-        List<String> lore = new ArrayList<>();
-        if (cLore != null) {
-            for (String s : cLore) {
-                lore.add(ChatColor.translateAlternateColorCodes('&', s));
-            }
-        }
-        name = ChatColor.translateAlternateColorCodes('&', cName);
-
-        if (StringUtils.isNumeric(cType)) {
-            type = Material.getMaterial(Integer.parseInt(cType));
-        } else if (Material.getMaterial(cType) != null) {
-            type = Material.getMaterial(cType);
-        } else if (cType.contains(":")) {
-            String[] parts = cType.split(":");
-            if (parts.length > 1) {
-                if (StringUtils.isNumeric(parts[0])) {
-                    type = Material.getMaterial(Integer.parseInt(parts[0]));
-                } else if (Material.getMaterial(parts[0]) != null) {
-                    type = Material.getMaterial(parts[0]);
-                }
-                if (StringUtils.isNumeric(parts[1])) {
-                    data = Integer.parseInt(parts[1]);
-                }
-            }
-        }
-
-        if (type == null) {
-            type = Material.STONE;
-        }
-
-
-        ItemStack is = new ItemStack(type, 1, (short) data);
-        ItemMeta ism = is.getItemMeta();
-        ism.setLore(lore);
-        ism.setDisplayName(name);
-        is.setItemMeta(ism);
-
-        if (config.isSet(path + ".enchantments")) {
-            for (String key : getConfig().getStringList(path + ".enchantments")) {
-                String[] split = key.split(":");
-                String ench = split[0];
-                String level;
-                if (split.length == 2) {
-                    level = split[1];
-                } else {
-                    level = "1";
-                }
-
-                if (Enchantment.getByName(ench) == null) continue;
-
-                try {
-                    Integer.parseInt(level);
-                } catch (NumberFormatException e) {
-                    level = "1";
-                }
-
-                is.addUnsafeEnchantment(Enchantment.getByName(ench), Integer.parseInt(level));
-            }
-        }
-
-        return is;
+        return itemGetter.getItem(path, config, this);
     }
 
     private void setupTitle() {
@@ -230,7 +232,11 @@ public class MoneyPouch extends JavaPlugin {
         GIVE_ITEM("give-item", "&6Given &e%player% %item%&6."),
         RECEIVE_ITEM("receive-item", "&6You have been given %item%&6."),
         PRIZE_MESSAGE("prize-message", "&6You have received &c%prefix%%prize%%suffix%&6!"),
-        ALREADY_OPENING("already-opening", "&cPlease wait for your current pouch opening to complete first!");
+        ALREADY_OPENING("already-opening", "&cPlease wait for your current pouch opening to complete first!"),
+        INVENTORY_FULL("inventory-full", "&cYour inventory is full"),
+        PURCHASE_SUCCESS("purchase-success", "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."),
+        PURCHASE_FAIL("purchase-fail", "&cYou do not have &c%prefix%%price%%suffix%&6."),
+        SHOP_DISABLED("shop-disabled", "&cThe pouch shop is disabled.");
 
         private String id;
         private String def; // (default message if undefined)

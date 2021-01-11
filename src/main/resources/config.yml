@@ -11,6 +11,10 @@ pouches:
         to: 10000
       options:
         economytype: "VAULT"
+        shop:
+          enabled: true
+          shopeconomy: "VAULT"
+          price: 5000
       lore:
         - "&7Open this pouch to receive money!"
     
@@ -21,7 +25,7 @@ pouches:
         from: 10001
         to: 50000
       options:
-        economytype: "VAULT"        
+        economytype: "VAULT"
       lore:
         - "&7Open this pouch to receive money!"
     
@@ -32,7 +36,7 @@ pouches:
         from: 50001
         to: 200000
       options:
-        economytype: "VAULT"        
+        economytype: "VAULT"
       lore:
         - "&7Open this pouch to receive money!"
 
@@ -71,6 +75,22 @@ pouches:
 # Rather than showing each digit left-to-right, reveal it right-to-left
 reverse-pouch-reveal: true
 
+# /mpshop
+shop:
+  enabled: true
+  ui-title: "Pouch Shop"
+  purchasable-items:
+    xp-1:
+      price: 4000
+      currency: "VAULT"
+    vault-1:
+      price: 5500
+      currency: "VAULT"
+  append-to-lore:
+    - "&8==========================="
+    - "&aPrice: &e%prefix%%price%%suffix%"
+    - "&aClick to purchase"
+
 # Economy prefixes and suffixes
 economy:
   xp:
@@ -89,4 +109,8 @@ messages:
   give-item: "&6Given &e%player% %item%&6."
   receive-item: "&6You have been given %item%&6."
   prize-message: "&6You have received &c%prefix%%prize%%suffix%&6!"
-  aready-opening: "&cPlease wait for your current pouch opening to complete first!"
+  already-opening: "&cPlease wait for your current pouch opening to complete first!"
+  inventory-full: "&cYour inventory is full"
+  purchase-success: "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."
+  purchase-fail: "&cYou do not have &c%prefix%%price%%suffix%&6."
+  shop-disabled: "&cThe pouch shop is disabled."
