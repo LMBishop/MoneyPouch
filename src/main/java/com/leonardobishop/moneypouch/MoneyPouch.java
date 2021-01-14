@@ -238,7 +238,7 @@ public class MoneyPouch extends JavaPlugin {
         PURCHASE_SUCCESS("purchase-success", "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."),
         PURCHASE_FAIL("purchase-fail", "&cYou do not have &c%prefix%%price%%suffix%&6."),
         SHOP_DISABLED("shop-disabled", "&cThe pouch shop is disabled."),
-        NO_PERMISSION("no-permission", "&cThe pouch shop is disabled.");
+        NO_PERMISSION("no-permission", "&cYou cannot open this pouch.");
 
         private String id;
         private String def; // (default message if undefined)

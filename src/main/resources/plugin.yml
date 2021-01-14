@@ -17,6 +17,7 @@ commands:
   moneypouchshop:
     description: Shop command for MoneyPouch
     usage: /moneypouchshop
+    permission: moneypouch.shop
     aliases: [mpshop]
 
 permissions:
