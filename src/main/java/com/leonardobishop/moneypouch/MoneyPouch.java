@@ -161,6 +161,7 @@ public class MoneyPouch extends JavaPlugin {
             String id = s.replace(" ", "_");
             long priceMin = this.getConfig().getLong("pouches.tier." + s + ".pricerange.from", 0);
             long priceMax = this.getConfig().getLong("pouches.tier." + s + ".pricerange.to", 0);
+            boolean permissionRequired = this.getConfig().getBoolean("pouches.tier." + s + ".options.permission-required", false);
 
             EconomyType economyType = getEconomyType(economyTypeId);
             if (economyType == null) economyType = getEconomyType("VAULT");
@@ -189,9 +190,9 @@ public class MoneyPouch extends JavaPlugin {
                 shopIsm.setLore(shopIsLore);
                 shopIs.setItemMeta(shopIsm);
 
-                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType, purchasable, purchaseEconomy, price, shopIs));
+                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType, permissionRequired, purchasable, purchaseEconomy, price, shopIs));
             } else {
-                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType));
+                pouches.add(new Pouch(s.replace(" ", "_"), priceMin, priceMax, is, economyType, permissionRequired));
             }
         }
     }
@@ -236,7 +237,8 @@ public class MoneyPouch extends JavaPlugin {
         INVENTORY_FULL("inventory-full", "&cYour inventory is full"),
         PURCHASE_SUCCESS("purchase-success", "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."),
         PURCHASE_FAIL("purchase-fail", "&cYou do not have &c%prefix%%price%%suffix%&6."),
-        SHOP_DISABLED("shop-disabled", "&cThe pouch shop is disabled.");
+        SHOP_DISABLED("shop-disabled", "&cThe pouch shop is disabled."),
+        NO_PERMISSION("no-permission", "&cThe pouch shop is disabled.");
 
         private String id;
         private String def; // (default message if undefined)

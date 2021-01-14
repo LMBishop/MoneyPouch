@@ -14,8 +14,9 @@ public class Pouch {
     private final EconomyType purchaseCurrency;
     private final long purchasePrice;
     private final ItemStack shopItemStack;
+    private final boolean permissionRequired;
 
-    public Pouch(String id, long minRange, long maxRange, ItemStack itemStack, EconomyType economyType) {
+    public Pouch(String id, long minRange, long maxRange, ItemStack itemStack, EconomyType economyType, boolean permissionRequired) {
         this.id = id;
         if (minRange >= maxRange) {
             this.minRange = maxRange - 1;
@@ -25,13 +26,14 @@ public class Pouch {
         this.maxRange = maxRange;
         this.itemStack = itemStack;
         this.economyType = economyType;
+        this.permissionRequired = permissionRequired;
         this.purchasable = false;
         this.purchaseCurrency = null;
         this.purchasePrice = 0;
         this.shopItemStack = null;
     }
 
-    public Pouch(String id, long minRange, long maxRange, ItemStack itemStack, EconomyType economyType,
+    public Pouch(String id, long minRange, long maxRange, ItemStack itemStack, EconomyType economyType, boolean permissionRequired,
                  boolean purchasable, EconomyType purchaseCurrency, long purchasePrice, ItemStack shopItemStack) {
         this.id = id;
         if (minRange >= maxRange) {
@@ -42,10 +44,15 @@ public class Pouch {
         this.maxRange = maxRange;
         this.itemStack = itemStack;
         this.economyType = economyType;
+        this.permissionRequired = permissionRequired;
         this.purchasable = purchasable;
         this.purchaseCurrency = purchaseCurrency;
         this.purchasePrice = purchasePrice;
         this.shopItemStack = shopItemStack;
+    }
+
+    public boolean isPermissionRequired() {
+        return permissionRequired;
     }
 
     public boolean isPurchasable() {

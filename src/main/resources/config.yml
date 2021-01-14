@@ -11,6 +11,7 @@ pouches:
         to: 10000
       options:
         economytype: "VAULT"
+        permission-required: true      # requires permission "moneypouch.pouches.vault-1"
       lore:
         - "&7Open this pouch to receive money!"
     
@@ -110,3 +111,4 @@ messages:
   purchase-success: "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."
   purchase-fail: "&cYou do not have &c%prefix%%price%%suffix%&6."
   shop-disabled: "&cThe pouch shop is disabled."
+  no-permission: "&cYou cannot open this pouch."

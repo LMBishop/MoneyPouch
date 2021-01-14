@@ -46,6 +46,12 @@ public class UseEvent implements Listener {
                         return;
                     }
 
+                    String permission = "moneypouch.pouches." + p.getId();
+                    if (p.isPermissionRequired() && !player.hasPermission(permission)) {
+                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.NO_PERMISSION));
+                        return;
+                    }
+
                     if (player.getItemInHand().getAmount() == 1) {
                         player.setItemInHand(null);
                     } else {
