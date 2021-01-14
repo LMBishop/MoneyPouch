@@ -28,7 +28,7 @@ public class MoneyPouchShopCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             if (!plugin.getConfig().getBoolean("shop.enabled", false)) {
-                sender.sendMessage(ChatColor.RED + "The shop is disabled.");
+                sender.sendMessage(plugin.getMessage(MoneyPouch.Message.SHOP_DISABLED));
                 return true;
             }
             Player player = (Player) sender;
