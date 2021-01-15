@@ -115,6 +115,7 @@ public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp :" + ChatColor.GRAY + " view this menu");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp <tier> [player] [amount] :" + ChatColor.GRAY + " give <item> to [player] (or self if blank)");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp list :" + ChatColor.GRAY + " list all pouches");
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp economies :" + ChatColor.GRAY + " list all economies");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp reload :" + ChatColor.GRAY + " reload the config");
         return true;
     }
