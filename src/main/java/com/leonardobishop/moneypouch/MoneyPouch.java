@@ -2,10 +2,7 @@ package com.leonardobishop.moneypouch;
 
 import com.leonardobishop.moneypouch.commands.MoneyPouchBaseCommand;
 import com.leonardobishop.moneypouch.commands.MoneyPouchShopCommand;
-import com.leonardobishop.moneypouch.economytype.EconomyType;
-import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
-import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
-import com.leonardobishop.moneypouch.economytype.XPEconomyType;
+import com.leonardobishop.moneypouch.economytype.*;
 import com.leonardobishop.moneypouch.events.UseEvent;
 import com.leonardobishop.moneypouch.gui.MenuController;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetter;
@@ -16,15 +13,20 @@ import com.leonardobishop.moneypouch.title.Title;
 import com.leonardobishop.moneypouch.title.Title_Bukkit;
 import com.leonardobishop.moneypouch.title.Title_BukkitNoTimings;
 import com.leonardobishop.moneypouch.title.Title_Other;
+import org.apache.commons.lang.StringUtils;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.net.URI;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,10 @@ public class MoneyPouch extends JavaPlugin {
 
     public EconomyType getEconomyType(String id) {
         return economyTypes.get(id.toLowerCase());
+    }
+
+    public HashMap<String, EconomyType> getEconomyTypes() {
+        return economyTypes;
     }
 
     public EconomyType registerEconomyType(String id, EconomyType type) {
@@ -79,6 +85,36 @@ public class MoneyPouch extends JavaPlugin {
                 super.getLogger().severe(ChatColor.RED + "...please delete the MoneyPouch directory and try RESTARTING (not reloading).");
             }
         }
+
+        File pouchDirectory = new File(this.getDataFolder() + File.separator + "customeconomytype");
+        if (!pouchDirectory.exists() && !pouchDirectory.isDirectory()) {
+            pouchDirectory.mkdir();
+
+            ArrayList<String> examples = new ArrayList<>();
+            examples.add("examplecustomeconomy.yml");
+            examples.add("README.txt");
+
+            for (String name : examples) {
+                File file = new File(this.getDataFolder() + File.separator + "customeconomytype" + File.separator + name);
+                try {
+                    file.createNewFile();
+                    try (InputStream in = this.getResource("customeconomytype/" + name)) {
+                        OutputStream out = new FileOutputStream(file);
+                        byte[] buffer = new byte[1024];
+                        int lenght = in.read(buffer);
+                        while (lenght != -1) {
+                            out.write(buffer, 0, lenght);
+                            lenght = in.read(buffer);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         this.setupTitle();
 
         MetricsLite metrics = new MetricsLite(this, 9927);
@@ -153,6 +189,50 @@ public class MoneyPouch extends JavaPlugin {
 
     public void reload() {
         super.reloadConfig();
+
+        FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
+            final URI economyTypeRoot = Paths.get(MoneyPouch.this.getDataFolder() + File.separator + "customeconomytype").toUri();
+
+            @Override
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
+                File economyTypeFile = new File(path.toUri());
+                URI relativeLocation = economyTypeRoot.relativize(path.toUri());
+
+                if (!economyTypeFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
+
+                YamlConfiguration config = new YamlConfiguration();
+                // test QUEST file integrity
+                try {
+                    config.load(economyTypeFile);
+                } catch (Exception ex) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                String id = economyTypeFile.getName().replace(".yml", "");
+
+                if (!StringUtils.isAlphanumeric(id)) {
+                    return FileVisitResult.CONTINUE;
+                }
+
+                String command = config.getString("transaction-prize-command");
+
+                if (command == null) command = "";
+
+                CustomEconomyType customEconomyType = new CustomEconomyType(MoneyPouch.this,
+                        MoneyPouch.this.getConfig().getString("economy." + id + ".prefix", ""),
+                        MoneyPouch.this.getConfig().getString("economy." + id + ".suffix", ""),
+                        command);
+
+                registerEconomyType(id, customEconomyType);
+                return FileVisitResult.CONTINUE;
+            }
+        };
+
+        try {
+            Files.walkFileTree(Paths.get(this.getDataFolder() + File.separator + "customeconomytype"), fileVisitor);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         pouches.clear();
         for (String s : this.getConfig().getConfigurationSection("pouches.tier").getKeys(false)) {

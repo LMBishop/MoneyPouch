@@ -2,6 +2,7 @@ package com.leonardobishop.moneypouch.commands;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;
+import com.leonardobishop.moneypouch.economytype.EconomyType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -14,6 +15,7 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
 
@@ -31,6 +33,13 @@ public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
                             pouch.getMinRange() + ", max: " + pouch.getMaxRange() + ", economy: " +
                             pouch.getEconomyType().toString() + " [" + pouch.getEconomyType().getPrefix() +
                             ChatColor.DARK_GRAY + "/" + ChatColor.LIGHT_PURPLE + pouch.getEconomyType().getSuffix() + "])");
+                }
+                return true;
+            } else if (args[0].equals("economy") || args[0].equals("economies") ) {
+                for (Map.Entry<String, EconomyType> economyTypeEntry : plugin.getEconomyTypes().entrySet()) {
+                    sender.sendMessage(ChatColor.DARK_PURPLE + economyTypeEntry.getKey() + " " + ChatColor.LIGHT_PURPLE
+                            + economyTypeEntry.getValue().toString() + " [" + economyTypeEntry.getValue().getPrefix() +
+                            ChatColor.DARK_GRAY + "/" + ChatColor.LIGHT_PURPLE +  economyTypeEntry.getValue().getSuffix() + "])");
                 }
                 return true;
             } else if (args[0].equals("reload")) {

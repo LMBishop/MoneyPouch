@@ -99,6 +99,9 @@ economy:
   lemonmobcoins:
     prefix: ""
     suffix: " Mob Coins"
+  examplecustomeconomy: # please see the "customeconomytype" directory for more info
+    prefix: ""
+    suffix: " Diamonds"
 
 # Messages here
 messages:
