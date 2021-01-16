@@ -190,6 +190,8 @@ public class MoneyPouch extends JavaPlugin {
     public void reload() {
         super.reloadConfig();
 
+        //TODO unload customeconomytypes and reload them
+
         FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
             final URI economyTypeRoot = Paths.get(MoneyPouch.this.getDataFolder() + File.separator + "customeconomytype").toUri();
 
