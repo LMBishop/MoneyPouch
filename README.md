@@ -40,7 +40,7 @@ For support please open a [GitHub issue](https://github.com/LMBishop/MoneyPouch/
 **This is the preferred method of bug reporting & feature requests**. Please use one of the two templates which are provided. If it is neither a bug report or a feature request and is a question, Discord would be a better place to asked this instead. **Follow the template in the issue tracker**. There is nothing more frustrating than people not reporting a bug correctly by missing out vital steps to reproduce the bug or an incomplete description. If the issue is not correctly formatted, it will be closed and ignored.
 
 ### Discord
-**This is the preferred method for general questions about Quests or the development of the project**.
+**This is the preferred method for general questions about MoneyPouch or the development of the project**.
 
 ### Language
 Please speak English and do not use any vulgar or harmful language. We work on this project in our free time, getting mad at us if things do not work will not achieve anything.
