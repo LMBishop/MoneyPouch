@@ -1,11 +1,13 @@
 # This is an example of a custom economy
 # The expected behaviour is for this to be a pouch containing diamonds, rather than money,
-# however you can use this feature to make this plugin compatible with any economy plugin,
-# as long as there is a command to give money.
+#   however you can use this feature to make this plugin compatible with any economy plugin,
+#   as long as there is a command to give money.
 #
-# The name of this file is the id of the economy, and must be alphanumeric with no spaces and unique
-# The command below will be executed when a player opens a pouch of this economy, replace %player% with the player
-# and %amount% with the amount
+# The name of this file (excluding the YML extension) is the id of the economy,
+#   and must be alphanumeric with no spaces and unique.
+# The command below will be executed when a player opens a pouch of this economy, 
+#   replace %player% with the player and %prize% with the reward.
 transaction-prize-command: "give %player% diamond %prize%"
 
 # You can configure the prefixes/suffixes the normal way in the main config
+# See https://github.com/LMBishop/MoneyPouch/wiki/Custom-Economy-Types for more info
