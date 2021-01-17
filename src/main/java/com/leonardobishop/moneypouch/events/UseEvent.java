@@ -2,6 +2,8 @@ package com.leonardobishop.moneypouch.events;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;
+import com.leonardobishop.moneypouch.economytype.InvalidEconomyType;
+import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
 import com.leonardobishop.moneypouch.title.Title_Other;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -40,6 +42,12 @@ public class UseEvent implements Listener {
             for (Pouch p : plugin.getPouches()) {
                 if (p.getItemStack().isSimilar(player.getItemInHand())) {
                     event.setCancelled(true);
+
+                    if (p.getEconomyType() instanceof InvalidEconomyType
+                            && plugin.getConfig().getBoolean("error-handling.prevent-opening-invalid-pouches", true)) {
+                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.INVALID_POUCH));
+                        return;
+                    }
 
                     if (opening.contains(player.getUniqueId())) {
                         player.sendMessage(plugin.getMessage(MoneyPouch.Message.ALREADY_OPENING));
@@ -144,18 +152,29 @@ public class UseEvent implements Listener {
 
                     opening.remove(player.getUniqueId());
                     this.cancel();
-                    if (player.isOnline()) {
-                        playSound(player, plugin.getConfig().getString("pouches.sound.endsound"));
-                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.PRIZE_MESSAGE)
-                                .replace("%prefix%", p.getEconomyType().getPrefix())
-                                .replace("%suffix%", p.getEconomyType().getSuffix())
-                                .replace("%prize%", NumberFormat.getInstance().format(random)));
-                    }
                     try {
                         p.getEconomyType().processPayment(player, random);
+                        if (player.isOnline()) {
+                            playSound(player, plugin.getConfig().getString("pouches.sound.endsound"));
+                            player.sendMessage(plugin.getMessage(MoneyPouch.Message.PRIZE_MESSAGE)
+                                    .replace("%prefix%", p.getEconomyType().getPrefix())
+                                    .replace("%suffix%", p.getEconomyType().getSuffix())
+                                    .replace("%prize%", NumberFormat.getInstance().format(random)));
+                        }
                     } catch (Throwable t) {
-                        plugin.getLogger().log(Level.SEVERE, "Failed to process payment for " + player.getName()
-                                + " of amount " + random + " of economy " + p.getEconomyType().toString() + ", did they disconnect?");
+                        if (plugin.getConfig().getBoolean("error-handling.log-failed-transactions", true)) {
+                            plugin.getLogger().log(Level.SEVERE, "Failed to process payment from pouch with ID '" + p.getId() + "' for player '" + player.getName()
+                                    + "' of amount " + random + " of economy " + p.getEconomyType().toString() + ": " + t.getMessage());
+                        }
+                        if (player.isOnline()) {
+                            if (plugin.getConfig().getBoolean("error-handling.refund-pouch", false)) {
+                                player.getInventory().addItem(p.getItemStack());
+                            }
+                            player.sendMessage(plugin.getMessage(MoneyPouch.Message.REWARD_ERROR)
+                                    .replace("%prefix%", p.getEconomyType().getPrefix())
+                                    .replace("%suffix%", p.getEconomyType().getSuffix())
+                                    .replace("%prize%", NumberFormat.getInstance().format(random)));
+                        }
                         t.printStackTrace();
                     }
                     return;

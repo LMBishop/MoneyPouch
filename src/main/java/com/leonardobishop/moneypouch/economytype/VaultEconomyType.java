@@ -1,6 +1,7 @@
 package com.leonardobishop.moneypouch.economytype;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
+import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,11 +36,14 @@ public class VaultEconomyType extends EconomyType {
     @Override
     public void processPayment(Player player, long amount) {
         if (fail) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to process payment: failed to hook into Vault");
-            return;
+            throw new PaymentFailedException("Failed to hook into Vault!");
         }
 
-        economy.depositPlayer(player, amount);
+        try {
+            economy.depositPlayer(player, amount);
+        } catch (Throwable t) {
+            throw new PaymentFailedException("An unknown exception occurred", t);
+        }
     }
 
     @Override

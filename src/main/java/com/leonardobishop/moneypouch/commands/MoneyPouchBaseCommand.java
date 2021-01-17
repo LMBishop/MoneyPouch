@@ -27,28 +27,6 @@ public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length > 0) {
-            if (args[0].equals("list")) {
-                for (Pouch pouch : plugin.getPouches()) {
-                    sender.sendMessage(ChatColor.DARK_PURPLE + pouch.getId() + " " + ChatColor.LIGHT_PURPLE + "(min: " +
-                            pouch.getMinRange() + ", max: " + pouch.getMaxRange() + ", economy: " +
-                            pouch.getEconomyType().toString() + " [" + pouch.getEconomyType().getPrefix() +
-                            ChatColor.DARK_GRAY + "/" + ChatColor.LIGHT_PURPLE + pouch.getEconomyType().getSuffix() + "])");
-                }
-                return true;
-            } else if (args[0].equals("economy") || args[0].equals("economies") ) {
-                for (Map.Entry<String, EconomyType> economyTypeEntry : plugin.getEconomyTypes().entrySet()) {
-                    sender.sendMessage(ChatColor.DARK_PURPLE + economyTypeEntry.getKey() + " " + ChatColor.LIGHT_PURPLE
-                            + economyTypeEntry.getValue().toString() + " [" + economyTypeEntry.getValue().getPrefix() +
-                            ChatColor.DARK_GRAY + "/" + ChatColor.LIGHT_PURPLE +  economyTypeEntry.getValue().getSuffix() + "])");
-                }
-                return true;
-            } else if (args[0].equals("reload")) {
-                plugin.reload();
-                sender.sendMessage(ChatColor.GRAY + "MoneyPouch has been reloaded");
-                return true;
-            }
-
-
             Player target = null;
 
             if (args.length >= 2) {
@@ -114,9 +92,10 @@ public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ChatColor.GRAY + "<> = required, [] = optional");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp :" + ChatColor.GRAY + " view this menu");
         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp <tier> [player] [amount] :" + ChatColor.GRAY + " give <item> to [player] (or self if blank)");
-        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp list :" + ChatColor.GRAY + " list all pouches");
-        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp economies :" + ChatColor.GRAY + " list all economies");
-        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mp reload :" + ChatColor.GRAY + " reload the config");
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mpshop :" + ChatColor.GRAY + " open the shop");
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mpa list :" + ChatColor.GRAY + " list all pouches");
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mpa economies :" + ChatColor.GRAY + " list all economies");
+        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/mpa reload :" + ChatColor.GRAY + " reload the config");
         return true;
     }
 

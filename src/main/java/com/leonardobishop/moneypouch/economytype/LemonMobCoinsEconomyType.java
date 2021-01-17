@@ -1,35 +1,30 @@
 package com.leonardobishop.moneypouch.economytype;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
-import me.max.lemonmobcoins.bukkit.LemonMobCoinsBukkitPlugin;
-import me.max.lemonmobcoins.common.LemonMobCoins;
+import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class LemonMobCoinsEconomyType extends EconomyType {
 
     private final MoneyPouch plugin;
     private boolean fail = false;
-    private LemonMobCoins lemonMobCoinsClass;
+    private Object mobCoinsBukkitPlugin;
+    private Object lemonMobCoinsCoinManagerObject;
+    private Method addCoinsToPlayerMethod;
+    private Method getCoinsOfPlayerMethod;
+    private Method deductCoinsFromPlayerMethod;
 
     public LemonMobCoinsEconomyType(MoneyPouch plugin, String prefix, String suffix) {
         super(prefix, suffix);
         this.plugin = plugin;
 
-        // TODO API for LemonMobCoins seems broken, using reflection instead
-        try {
-            LemonMobCoinsBukkitPlugin mobCoinsPlugin = (LemonMobCoinsBukkitPlugin) Bukkit.getPluginManager().getPlugin("LemonMobCoins");
-            Field mobCoins = mobCoinsPlugin.getClass().getDeclaredField("lemonMobCoins");
-            mobCoins.setAccessible(true);
-            lemonMobCoinsClass = (LemonMobCoins) mobCoins.get(mobCoinsPlugin);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            fail = true;
-            plugin.getLogger().log(Level.SEVERE, "Cannot hook into LemonMobCoins!");
-            e.printStackTrace();
-        }
+        reflect();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("LemonMobCoins") == null) {
             fail = true;
@@ -38,15 +33,45 @@ public class LemonMobCoinsEconomyType extends EconomyType {
     }
     @Override
     public void processPayment(Player player, long amount) {
-        if (fail) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to process payment: failed to hook into LemonMobCoins");
-            return;
+        // this can change if lemonmobcoins is reloaded using plugman as some weird fuckery happens
+        if (mobCoinsBukkitPlugin.getClass().getName().equals(
+                Bukkit.getPluginManager().getPlugin("LemonMobCoins").getClass().getName())) {
+            reflect();
         }
 
+        if (fail) {
+            throw new PaymentFailedException("Failed to hook into LemonMobCoins!");
+        }
         try {
-            lemonMobCoinsClass.getCoinManager().addCoinsToPlayer(player.getUniqueId(), amount);
+            addCoinsToPlayerMethod.invoke(lemonMobCoinsCoinManagerObject,
+                    player.getUniqueId(), Double.parseDouble(String.valueOf(amount)));
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to process payment: an unknown exception occurred");
+            throw new PaymentFailedException("An unknown exception occurred", e);
+        }
+    }
+
+    private void reflect() {
+        // TODO API for LemonMobCoins seems broken, using reflection instead
+        try {
+            mobCoinsBukkitPlugin = Bukkit.getPluginManager().getPlugin("LemonMobCoins");
+            Field mobCoinsField = mobCoinsBukkitPlugin.getClass().getDeclaredField("lemonMobCoins");
+            mobCoinsField.setAccessible(true);
+            Object lemonMobCoinsObject = mobCoinsField.get(mobCoinsBukkitPlugin);
+            Field coinManagerField = lemonMobCoinsObject.getClass().getDeclaredField("coinManager");
+            coinManagerField.setAccessible(true);
+            lemonMobCoinsCoinManagerObject = coinManagerField.get(lemonMobCoinsObject);
+            addCoinsToPlayerMethod = lemonMobCoinsCoinManagerObject.getClass()
+                    .getDeclaredMethod("addCoinsToPlayer", UUID.class, double.class);
+            addCoinsToPlayerMethod.setAccessible(true);
+            getCoinsOfPlayerMethod = lemonMobCoinsCoinManagerObject.getClass()
+                    .getDeclaredMethod("getCoinsOfPlayer", UUID.class);
+            getCoinsOfPlayerMethod.setAccessible(true);
+            deductCoinsFromPlayerMethod = lemonMobCoinsCoinManagerObject.getClass()
+                    .getDeclaredMethod("deductCoinsFromPlayer", UUID.class, double.class);
+            deductCoinsFromPlayerMethod.setAccessible(true);
+        } catch (Exception e) {
+            fail = true;
+            plugin.getLogger().log(Level.SEVERE, "Cannot hook into LemonMobCoins!");
             e.printStackTrace();
         }
     }
@@ -58,15 +83,13 @@ public class LemonMobCoinsEconomyType extends EconomyType {
         }
 
         try {
-            if (lemonMobCoinsClass.getCoinManager().getCoinsOfPlayer(player.getUniqueId()) < amount) {
+            if ((double) getCoinsOfPlayerMethod.invoke(lemonMobCoinsCoinManagerObject, player.getUniqueId()) < amount) {
                 return false;
             }
-            lemonMobCoinsClass.getCoinManager().deductCoinsFromPlayer(player.getUniqueId(), amount);
+            deductCoinsFromPlayerMethod.invoke(lemonMobCoinsCoinManagerObject, player.getUniqueId(), amount);
             return true;
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Failed to complete transaction in shop: an unknown exception occurred");
-            e.printStackTrace();
-            return false;
+            throw new PaymentFailedException("An unknown exception occurred", e);
         }
     }
 

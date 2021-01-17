@@ -1,5 +1,6 @@
 package com.leonardobishop.moneypouch;
 
+import com.leonardobishop.moneypouch.commands.MoneyPouchAdminCommand;
 import com.leonardobishop.moneypouch.commands.MoneyPouchBaseCommand;
 import com.leonardobishop.moneypouch.commands.MoneyPouchShopCommand;
 import com.leonardobishop.moneypouch.economytype.*;
@@ -30,6 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MoneyPouch extends JavaPlugin {
 
@@ -40,6 +42,9 @@ public class MoneyPouch extends JavaPlugin {
     private HashMap<String, EconomyType> economyTypes = new HashMap<>();
 
     public EconomyType getEconomyType(String id) {
+        if (id == null) {
+            return null;
+        }
         return economyTypes.get(id.toLowerCase());
     }
 
@@ -47,8 +52,13 @@ public class MoneyPouch extends JavaPlugin {
         return economyTypes;
     }
 
-    public EconomyType registerEconomyType(String id, EconomyType type) {
-        return economyTypes.put(id, type);
+    public boolean registerEconomyType(String id, EconomyType type) {
+        if (economyTypes.containsKey(id)) {
+            super.getLogger().warning("Economy type registration " + type.toString() + " ignored due to conflicting ID '" + id + "' with economy type " + economyTypes.get(id).toString());
+            return false;
+        }
+        economyTypes.put(id, type);
+        return true;
     }
 
     private ArrayList<Pouch> pouches = new ArrayList<>();
@@ -124,6 +134,7 @@ public class MoneyPouch extends JavaPlugin {
 
         menuController = new MenuController(this);
 
+        registerEconomyType("invalid", new InvalidEconomyType());
         registerEconomyType("xp", new XPEconomyType(this,   // vv for legacy purposes
                 this.getConfig().getString("economy.xp.prefix", this.getConfig().getString("economy.prefixes.xp", "")),
                 this.getConfig().getString("economy.xp.suffix", this.getConfig().getString("economy.suffixes.xp", " XP"))));
@@ -143,6 +154,7 @@ public class MoneyPouch extends JavaPlugin {
 
         super.getServer().getPluginCommand("moneypouch").setExecutor(new MoneyPouchBaseCommand(this));
         super.getServer().getPluginCommand("moneypouchshop").setExecutor(new MoneyPouchShopCommand(this));
+        super.getServer().getPluginCommand("moneypouchadmin").setExecutor(new MoneyPouchAdminCommand(this));
         super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
         super.getServer().getPluginManager().registerEvents(menuController, this);
 
@@ -190,7 +202,15 @@ public class MoneyPouch extends JavaPlugin {
     public void reload() {
         super.reloadConfig();
 
-        //TODO unload customeconomytypes and reload them
+        ArrayList<String> custom = new ArrayList<>();
+        for (Map.Entry<String, EconomyType> entry : economyTypes.entrySet()) {
+            if (entry.getValue() instanceof CustomEconomyType) {
+                custom.add(entry.getKey());
+            }
+        }
+        for (String s : custom) {
+            economyTypes.remove(s);
+        }
 
         FileVisitor<Path> fileVisitor = new SimpleFileVisitor<Path>() {
             final URI economyTypeRoot = Paths.get(MoneyPouch.this.getDataFolder() + File.separator + "customeconomytype").toUri();
@@ -203,7 +223,7 @@ public class MoneyPouch extends JavaPlugin {
                 if (!economyTypeFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
 
                 YamlConfiguration config = new YamlConfiguration();
-                // test QUEST file integrity
+                // test MP file integrity
                 try {
                     config.load(economyTypeFile);
                 } catch (Exception ex) {
@@ -246,7 +266,10 @@ public class MoneyPouch extends JavaPlugin {
             boolean permissionRequired = this.getConfig().getBoolean("pouches.tier." + s + ".options.permission-required", false);
 
             EconomyType economyType = getEconomyType(economyTypeId);
-            if (economyType == null) economyType = getEconomyType("VAULT");
+            if (economyType == null) {
+                economyType = getEconomyType("invalid");
+                super.getLogger().warning("Pouch with ID " + s + " tried to use an invalid economy type '" + economyTypeId + "'.");
+            }
 
             //shop
             boolean purchasable = this.getConfig().contains("shop.purchasable-items." + s);
@@ -255,7 +278,10 @@ public class MoneyPouch extends JavaPlugin {
                 String purchaseEconomyId = this.getConfig().getString("shop.purchasable-items." + s + ".currency", "VAULT");
                 EconomyType purchaseEconomy = getEconomyType(purchaseEconomyId);
 
-                if (purchaseEconomy == null) purchaseEconomy = getEconomyType("VAULT");
+                if (purchaseEconomy == null) {
+                    purchaseEconomy = getEconomyType("invalid");
+                    super.getLogger().warning("Pouch with ID " + s + " tried to use an invalid currency (for /mpshop) economy type '" + purchaseEconomyId + "'.");
+                }
 
                 ItemStack shopIs = getItemStack("pouches.tier." + s, this.getConfig());
                 ItemMeta shopIsm = shopIs.getItemMeta();
@@ -316,9 +342,12 @@ public class MoneyPouch extends JavaPlugin {
         RECEIVE_ITEM("receive-item", "&6You have been given %item%&6."),
         PRIZE_MESSAGE("prize-message", "&6You have received &c%prefix%%prize%%suffix%&6!"),
         ALREADY_OPENING("already-opening", "&cPlease wait for your current pouch opening to complete first!"),
-        INVENTORY_FULL("inventory-full", "&cYour inventory is full"),
+        INVALID_POUCH("invalid-pouch", "&cThis pouch is invalid and cannot be opened."),
+        INVENTORY_FULL("inventory-full", "&cYour inventory is full."),
+        REWARD_ERROR("reward-error", "&cYour reward of %prefix%%prize%%suffix% has failed to process. Contact an admin, this has been logged."),
         PURCHASE_SUCCESS("purchase-success", "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."),
         PURCHASE_FAIL("purchase-fail", "&cYou do not have &c%prefix%%price%%suffix%&6."),
+        PURCHASE_ERROR("purchase-ERROR", "&cCould not complete transaction for %item%&c."),
         SHOP_DISABLED("shop-disabled", "&cThe pouch shop is disabled."),
         NO_PERMISSION("no-permission", "&cYou cannot open this pouch.");
 

@@ -1,6 +1,7 @@
 package com.leonardobishop.moneypouch.economytype;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
+import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
 import org.bukkit.entity.Player;
 
 public class XPEconomyType extends EconomyType {
@@ -15,9 +16,15 @@ public class XPEconomyType extends EconomyType {
     @Override
     public void processPayment(Player player, long amount) {
         if (!player.isOnline()) {
-            throw new AssertionError("Player is offline!");
+            throw new PaymentFailedException("Player is offline!", new AssertionError("Player is offline!"));
         }
-        player.giveExp(Integer.parseInt(String.valueOf(amount)));
+        int xp;
+        try {
+            xp = Integer.parseInt(String.valueOf(amount));
+        } catch (NumberFormatException ex) {
+            throw new PaymentFailedException("XP value is too large!");
+        }
+        player.giveExp(xp);
     }
 
     @Override

@@ -20,8 +20,23 @@ public abstract class EconomyType {
         return suffix;
     }
 
+    /**
+     * Process the reward for a player when they open a MoneyPouch.
+     *
+     * @param player the player to receive the reward
+     * @param amount the reward amount (prize)
+     */
     public abstract void processPayment(Player player, long amount);
+
+    /**
+     * Charge the player when they purchase a MoneyPouch from the shop.
+     *
+     * @param player the player purchasing a MoneyPouch
+     * @param amount the amount to be charged
+     * @return true if the payment succeeds, false if otherwise
+     */
     public abstract boolean doTransaction(Player player, long amount);
+
     public abstract String toString();
 
 }

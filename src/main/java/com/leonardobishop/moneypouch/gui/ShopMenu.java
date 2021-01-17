@@ -27,7 +27,17 @@ public class ShopMenu extends Menu {
         if (super.getInventory().firstEmpty() == -1) {
             super.getPlayer().sendMessage(plugin.getMessage(MoneyPouch.Message.INVENTORY_FULL));
         } else if (pouch != null) {
-            boolean success = pouch.getPurchaseCurrency().doTransaction(super.getPlayer(), pouch.getPurchasePrice());
+            boolean success;
+            try {
+                success = pouch.getPurchaseCurrency().doTransaction(super.getPlayer(), pouch.getPurchasePrice());
+            } catch (Exception e) {
+                super.getPlayer().sendMessage(plugin.getMessage(MoneyPouch.Message.PURCHASE_ERROR)
+                        .replace("%item%", pouch.getItemStack().getItemMeta().getDisplayName())
+                        .replace("%prefix%", pouch.getPurchaseCurrency().getPrefix())
+                        .replace("%suffix%", pouch.getPurchaseCurrency().getSuffix())
+                        .replace("%price%", String.valueOf(pouch.getPurchasePrice())));
+                return;
+            }
             if (success) {
                 super.getPlayer().getInventory().addItem(pouch.getItemStack());
                 super.getPlayer().sendMessage(plugin.getMessage(MoneyPouch.Message.PURCHASE_SUCCESS)

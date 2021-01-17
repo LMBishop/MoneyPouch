@@ -19,6 +19,11 @@ commands:
     usage: /moneypouchshop
     permission: moneypouch.shop
     aliases: [mpshop]
+  moneypouchadmin:
+    description: Admin command for MoneyPouch
+    usage: /moneypouchshop
+    permission: moneypouch.admin
+    aliases: [mpa]
 
 permissions:
   moneypouch.admin:

@@ -72,6 +72,22 @@ pouches:
 # Rather than showing each digit left-to-right, reveal it right-to-left
 reverse-pouch-reveal: true
 
+error-handling:
+  # It is recommended you set the following to 'true' in a production environment
+  # The plugin will log should a transaction fail for any reason, allowing you to investigate
+  # and manually reward the player yourself
+  # The player will be alerted and asked to tell an admin should this event occur regardless if this is disabled
+  # You can change this message ('reward-error') at the bottom of the config
+  log-failed-transactions: true
+  # Refund the pouch to the player (if they are online) in the event a transaction failed - this is default
+  # to 'false' as this results in a different prize on the second try, and it is unlikely
+  # that the transaction will succeed if it had already failed. It is recommended
+  # to keep this 'false' and manually investigate when errors occur.
+  refund-pouch: false
+  # Prevent opening pouches which have an invalid economy type assigned to them.
+  # The message 'invalid-pouch' will be sent to the player.
+  prevent-opening-invalid-pouches: true
+
 # /mpshop
 shop:
   enabled: true
@@ -110,8 +126,11 @@ messages:
   receive-item: "&6You have been given %item%&6."
   prize-message: "&6You have received &c%prefix%%prize%%suffix%&6!"
   already-opening: "&cPlease wait for your current pouch opening to complete first!"
-  inventory-full: "&cYour inventory is full"
+  invalid-pouch: "&cThis pouch is invalid and cannot be opened."
+  inventory-full: "&cYour inventory is full."
+  reward-error: "&cYour reward of %prefix%%prize%%suffix% &chas failed to process. Contact an admin, this has been logged."
   purchase-success: "&6You have purchased %item%&6 for &c%prefix%%price%%suffix%&6."
   purchase-fail: "&cYou do not have &c%prefix%%price%%suffix%&6."
+  purchase-error: "&cCould not complete transaction for %item%&c."
   shop-disabled: "&cThe pouch shop is disabled."
   no-permission: "&cYou cannot open this pouch."

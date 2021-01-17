@@ -23,7 +23,7 @@ public class CustomEconomyType extends EconomyType {
 
     @Override
     public boolean doTransaction(Player player, long amount) {
-        return false;
+        throw new RuntimeException("Cannot do shop transactions on custom YML economies.");
         // cannot do transactions for custom economies as there is no simple way
         // to check if the player has the required balance using commands
     }
