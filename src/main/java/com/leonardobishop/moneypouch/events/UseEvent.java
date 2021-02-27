@@ -3,7 +3,6 @@ package com.leonardobishop.moneypouch.events;
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;
 import com.leonardobishop.moneypouch.economytype.InvalidEconomyType;
-import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
 import com.leonardobishop.moneypouch.title.Title_Other;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

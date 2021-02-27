@@ -3,7 +3,12 @@ package com.leonardobishop.moneypouch;
 import com.leonardobishop.moneypouch.commands.MoneyPouchAdminCommand;
 import com.leonardobishop.moneypouch.commands.MoneyPouchBaseCommand;
 import com.leonardobishop.moneypouch.commands.MoneyPouchShopCommand;
-import com.leonardobishop.moneypouch.economytype.*;
+import com.leonardobishop.moneypouch.economytype.CustomEconomyType;
+import com.leonardobishop.moneypouch.economytype.EconomyType;
+import com.leonardobishop.moneypouch.economytype.InvalidEconomyType;
+import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
+import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
+import com.leonardobishop.moneypouch.economytype.XPEconomyType;
 import com.leonardobishop.moneypouch.events.UseEvent;
 import com.leonardobishop.moneypouch.gui.MenuController;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetter;
@@ -24,9 +29,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +49,12 @@ import java.util.Map;
 
 public class MoneyPouch extends JavaPlugin {
 
+    private final ArrayList<Pouch> pouches = new ArrayList<>();
+    private final HashMap<String, EconomyType> economyTypes = new HashMap<>();
+
     private Title titleHandle;
     private ItemGetter itemGetter;
     private MenuController menuController;
-
-    private HashMap<String, EconomyType> economyTypes = new HashMap<>();
 
     public EconomyType getEconomyType(String id) {
         if (id == null) {
@@ -60,8 +75,6 @@ public class MoneyPouch extends JavaPlugin {
         economyTypes.put(id, type);
         return true;
     }
-
-    private ArrayList<Pouch> pouches = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -135,7 +148,7 @@ public class MoneyPouch extends JavaPlugin {
         menuController = new MenuController(this);
 
         registerEconomyType("invalid", new InvalidEconomyType());
-        registerEconomyType("xp", new XPEconomyType(this,   // vv for legacy purposes
+        registerEconomyType("xp", new XPEconomyType(           // vv for legacy purposes
                 this.getConfig().getString("economy.xp.prefix", this.getConfig().getString("economy.prefixes.xp", "")),
                 this.getConfig().getString("economy.xp.suffix", this.getConfig().getString("economy.suffixes.xp", " XP"))));
 
@@ -218,8 +231,6 @@ public class MoneyPouch extends JavaPlugin {
             @Override
             public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) {
                 File economyTypeFile = new File(path.toUri());
-                URI relativeLocation = economyTypeRoot.relativize(path.toUri());
-
                 if (!economyTypeFile.getName().toLowerCase().endsWith(".yml")) return FileVisitResult.CONTINUE;
 
                 YamlConfiguration config = new YamlConfiguration();
@@ -240,7 +251,7 @@ public class MoneyPouch extends JavaPlugin {
 
                 if (command == null) command = "";
 
-                CustomEconomyType customEconomyType = new CustomEconomyType(MoneyPouch.this,
+                CustomEconomyType customEconomyType = new CustomEconomyType(
                         MoneyPouch.this.getConfig().getString("economy." + id + ".prefix", ""),
                         MoneyPouch.this.getConfig().getString("economy." + id + ".suffix", ""),
                         command);
@@ -260,7 +271,7 @@ public class MoneyPouch extends JavaPlugin {
         for (String s : this.getConfig().getConfigurationSection("pouches.tier").getKeys(false)) {
             ItemStack is = getItemStack("pouches.tier." + s, this.getConfig());
             String economyTypeId = this.getConfig().getString("pouches.tier." + s + ".options.economytype", "VAULT");
-            String id = s.replace(" ", "_");
+//            String id = s.replace(" ", "_");
             long priceMin = this.getConfig().getLong("pouches.tier." + s + ".pricerange.from", 0);
             long priceMax = this.getConfig().getLong("pouches.tier." + s + ".pricerange.to", 0);
             boolean permissionRequired = this.getConfig().getBoolean("pouches.tier." + s + ".options.permission-required", false);

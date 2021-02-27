@@ -6,15 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ShopMenu extends Menu {
 
-    private MoneyPouch plugin;
-    private HashMap<Integer, Pouch> pouchLocations = new HashMap<>();
+    private final MoneyPouch plugin;
+    private final HashMap<Integer, Pouch> pouchLocations = new HashMap<>();
 
     public ShopMenu(Player player, MoneyPouch plugin) {
         super(player);
@@ -55,7 +54,9 @@ public class ShopMenu extends Menu {
     }
 
     @Override
-    public void update() { }
+    public void update() {
+        // not implementeed
+    }
 
     @Override
     public void initialize() {

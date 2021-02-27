@@ -2,7 +2,6 @@ package com.leonardobishop.moneypouch.commands;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;
-import com.leonardobishop.moneypouch.economytype.EconomyType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,7 +14,6 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
 

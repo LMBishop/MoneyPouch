@@ -1,17 +1,14 @@
 package com.leonardobishop.moneypouch.economytype;
 
-import com.leonardobishop.moneypouch.MoneyPouch;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class CustomEconomyType extends EconomyType {
 
-    private final MoneyPouch plugin;
-    private String command;
+    private final String command;
 
-    public CustomEconomyType(MoneyPouch plugin, String prefix, String suffix, String command) {
+    public CustomEconomyType(String prefix, String suffix, String command) {
         super(prefix, suffix);
-        this.plugin = plugin;
         this.command = command;
     }
 
