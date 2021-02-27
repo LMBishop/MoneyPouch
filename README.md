@@ -14,7 +14,7 @@ The latest release version of MoneyPouch can be found on either
 * [SpigotMC](https://www.spigotmc.org/resources/21905/)
 * [Songoda](https://songoda.com/marketplace/product/540)
 
-Alternatively, you can build MoneyPouch via Maven from source using ``mvn clean package``.
+Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew build``.
 
 ### Maven
 You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
@@ -24,11 +24,24 @@ You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#L
     <url>https://jitpack.io</url>
 </repository>
 
+<!-- MoneyPouch -->
 <dependency>
     <groupId>com.github.LMBishop</groupId>
     <artifactId>MoneyPouch</artifactId>
     <version>-SNAPSHOT</version>
 <dependency>
+```
+
+### Gradle
+You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
+```groovy
+repositories {
+    maven { url = 'https://jitpack.io' }
+}  
+dependencies {
+    // MoneyPouch
+    compileOnly 'com.github.LMBishop:MoneyPouch:master-SNAPSHOT'
+}
 ```
 
 ## Contributors
@@ -55,17 +68,9 @@ The **artwork** for MoneyPouch is licensed under the Creative Commons Attributio
 The configuration documentation can be found at the [wiki](https://github.com/LMBishop/MoneyPouch/wiki/Config).
 
 ## Contributing To MoneyPouch
-Fork and make a pull request. Please be consistent with the formatting of the file, please state what you have changed, please test what you have changed before submitting a pull request to make sure it works. 
+We welcome all contributions :)
 
 ### Contribution Guidelines
-Make sure to format your file using *4 spaces* not *tabs*. When committing, please format your message using ~50 character summary on the first line, a blank line then (if applicable) a more detailed description either in bullet points (using a dash as the bullet) or as paragraphs.
+Please be consistent with the code style in the rest of the file. For large breaking changes, it may also be wise to discuss these beforehand.
 
-Example commit message:
-```
-Added guidelines to README.md
-
-- Added information on using Maven to build Quests.
-- Added information on how to use the Issue Tracker effectively to communcate bugs.
-- Made sure to elaborate on how to format files and commit messages.
-```
 Make sure your changes actually work before submitting a pull request by building the project and testing it on a Spigot server using the latest version.

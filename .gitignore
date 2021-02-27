@@ -2,8 +2,9 @@ out/
 .idea/
 *.iml
 .github/
-target/
+build/
 /bin/
 .classpath
 .project
 .settings/
+.gradle/

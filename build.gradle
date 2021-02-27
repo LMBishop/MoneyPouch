@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.leonardobishop'
+version = '3.4'
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'plugin.yml'
+        expand('version': project.version)
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    // Spigot
+    maven { url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/') }
+    // JitPack
+    maven { url = uri('https://jitpack.io') }
+    // bStats
+    maven { url = uri('https://repo.codemc.org/repository/maven-public') }
+}
+
+dependencies {
+    // bStats
+    implementation 'org.bstats:bstats-bukkit-lite:1.8'
+    // Spigot
+    compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
+    // Vault
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    // LemonMobCoins
+    compileOnly ('com.github.LemmoTresto:LemonMobCoins:master-SNAPSHOT') {
+        exclude group: 'org.spongepowered'
+        exclude group: 'co.aikar'
+    }
+}
+
+compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+}
