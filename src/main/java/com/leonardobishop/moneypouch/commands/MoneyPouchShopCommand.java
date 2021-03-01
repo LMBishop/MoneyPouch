@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class MoneyPouchShopCommand implements CommandExecutor {
 
-    private MoneyPouch plugin;
+    private final MoneyPouch plugin;
 
     public MoneyPouchShopCommand(MoneyPouch plugin) {
         this.plugin = plugin;

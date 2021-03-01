@@ -3,6 +3,9 @@ package com.leonardobishop.moneypouch;
 import com.leonardobishop.moneypouch.economytype.EconomyType;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Represents a type of pouch on the server.
+ */
 public class Pouch {
 
     private final String id;
@@ -51,42 +54,93 @@ public class Pouch {
         this.shopItemStack = shopItemStack;
     }
 
+    /**
+     * Boolean of whether or not a permission is required to open the pouch.
+     *
+     * @return boolean
+     */
     public boolean isPermissionRequired() {
         return permissionRequired;
     }
 
+    /**
+     * Boolean of whether or not the pouch can be bought from the MoneyPouch shop.
+     *
+     * @return boolean
+     */
     public boolean isPurchasable() {
         return purchasable;
     }
 
+    /**
+     * Get the {@link EconomyType} of the currency used to purchase the pouch from the MoneyPouch shop.
+     * Returns {@code null} if no currency is specified.
+     *
+     * @return {@link EconomyType}
+     */
     public EconomyType getPurchaseCurrency() {
         return purchaseCurrency;
     }
 
+    /**
+     * Get the price of the pouch in the MoneyPouch shop.
+     *
+     * @return long
+     */
     public long getPurchasePrice() {
         return purchasePrice;
     }
 
+    /**
+     * Get the unique ID of the pouch.
+     *
+     * @return String
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Get the lower bound of the possible rewards from this pouch.
+     *
+     * @return long
+     */
     public long getMinRange() {
         return minRange;
     }
 
+    /**
+     * Get the upper bound of the possible rewards from this pouch.
+     *
+     * @return long
+     */
     public long getMaxRange() {
         return maxRange;
     }
 
+    /**
+     * Get the {@link ItemStack} used to represent this pouch in the player's inventory.
+     *
+     * @return {@link ItemStack}
+     */
     public ItemStack getItemStack() {
         return itemStack;
     }
 
+    /**
+     * Get the {@link ItemStack} used to represent this pouch in the MoneyPouch shop.
+     *
+     * @return {@link ItemStack}
+     */
     public ItemStack getShopItemStack() {
         return shopItemStack;
     }
 
+    /**
+     * Get the {@link EconomyType} of the currency used as a reward from this pouch.
+     *
+     * @return {@link EconomyType}
+     */
     public EconomyType getEconomyType() {
         return economyType;
     }

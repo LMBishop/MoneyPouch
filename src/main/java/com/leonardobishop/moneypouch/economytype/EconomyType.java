@@ -4,8 +4,8 @@ import org.bukkit.entity.Player;
 
 public abstract class EconomyType {
 
-    private String prefix;
-    private String suffix;
+    private final String prefix;
+    private final String suffix;
 
     public EconomyType(String prefix, String suffix) {
         this.prefix = prefix;

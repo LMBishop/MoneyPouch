@@ -49,14 +49,20 @@ import java.util.List;
 import java.util.Map;
 
 public class MoneyPouch extends JavaPlugin {
-
     private final ArrayList<Pouch> pouches = new ArrayList<>();
+
     private final HashMap<String, EconomyType> economyTypes = new HashMap<>();
 
     private Title titleHandle;
     private ItemGetter itemGetter;
     private MenuController menuController;
 
+    /**
+     * Gets a registered {@link EconomyType} with a specified ID.
+     *
+     * @param id id of economy type
+     * @return   {@link EconomyType} or null
+     */
     public EconomyType getEconomyType(String id) {
         if (id == null) {
             return null;
@@ -64,10 +70,23 @@ public class MoneyPouch extends JavaPlugin {
         return economyTypes.get(id.toLowerCase());
     }
 
+    /**
+     * Get all registered {@link EconomyType}.
+     *
+     * @return {@code Map<String, EconomyType>} of economy types - the key is the ID
+     */
     public HashMap<String, EconomyType> getEconomyTypes() {
         return economyTypes;
     }
 
+    /**
+     * Registers an {@link EconomyType} with the plugin.
+     * If the ID conflicts with an existing type, the registration will be ignored.
+     *
+     * @param id    id of the economy type
+     * @param type  the economy type
+     * @return      boolean if registered
+     */
     public boolean registerEconomyType(String id, EconomyType type) {
         if (economyTypes.containsKey(id)) {
             super.getLogger().warning("Economy type registration " + type.toString() + " ignored due to conflicting ID '" + id + "' with economy type " + economyTypes.get(id).toString());
@@ -75,6 +94,15 @@ public class MoneyPouch extends JavaPlugin {
         }
         economyTypes.put(id, type);
         return true;
+    }
+
+    /**
+     * Get a list of all pouches loaded
+     *
+     * @return {@code ArrayList<Pouch>}
+     */
+    public ArrayList<Pouch> getPouches() {
+        return pouches;
     }
 
     @Override
@@ -178,10 +206,6 @@ public class MoneyPouch extends JavaPlugin {
                 + message.getId(), message.getDef()));
     }
 
-    public ArrayList<Pouch> getPouches() {
-        return pouches;
-    }
-
     public Title getTitleHandle() {
         return titleHandle;
     }
@@ -210,7 +234,7 @@ public class MoneyPouch extends JavaPlugin {
         if (version.startsWith("v1_7")) {
             titleHandle = new Title_Other();
         } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
-            titleHandle = new Title_BukkitReflect();
+            titleHandle = new Title_BukkitReflect(this);
         } else {
             titleHandle = new Title_Bukkit();
         }

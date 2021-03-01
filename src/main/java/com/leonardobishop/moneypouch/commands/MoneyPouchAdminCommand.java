@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class MoneyPouchAdminCommand implements CommandExecutor, TabCompleter {
 
-    private MoneyPouch plugin;
+    private final MoneyPouch plugin;
 
     public MoneyPouchAdminCommand(MoneyPouch plugin) {
         this.plugin = plugin;

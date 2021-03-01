@@ -17,7 +17,7 @@ import java.util.List;
 
 public class MoneyPouchBaseCommand implements CommandExecutor, TabCompleter {
 
-    private MoneyPouch plugin;
+    private final MoneyPouch plugin;
 
     public MoneyPouchBaseCommand(MoneyPouch plugin) {
         this.plugin = plugin;

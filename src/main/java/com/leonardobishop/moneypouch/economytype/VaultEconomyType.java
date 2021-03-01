@@ -12,7 +12,8 @@ import java.util.logging.Level;
 public class VaultEconomyType extends EconomyType {
 
     private final MoneyPouch plugin;
-    private static Economy economy = null;
+
+    private Economy economy = null;
     private boolean fail = false;
 
     public VaultEconomyType(MoneyPouch plugin, String prefix, String suffix) {

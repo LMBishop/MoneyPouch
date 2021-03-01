@@ -23,8 +23,8 @@ import java.util.logging.Level;
 
 public class UseEvent implements Listener {
 
-    private MoneyPouch plugin;
-    private ArrayList<UUID> opening = new ArrayList<>();
+    private final MoneyPouch plugin;
+    private final ArrayList<UUID> opening = new ArrayList<>();
 
     public UseEvent(MoneyPouch plugin) {
         this.plugin = plugin;

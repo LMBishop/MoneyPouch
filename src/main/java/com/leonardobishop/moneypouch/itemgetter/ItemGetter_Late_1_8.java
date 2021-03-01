@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class ItemGetter_Late_1_8 implements ItemGetter {
+
     /*
      reads the following:
       - name

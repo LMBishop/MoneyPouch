@@ -13,6 +13,7 @@ import java.util.logging.Level;
 public class LemonMobCoinsEconomyType extends EconomyType {
 
     private final MoneyPouch plugin;
+
     private boolean fail = false;
     private Object mobCoinsBukkitPlugin;
     private Object lemonMobCoinsCoinManagerObject;
