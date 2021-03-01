@@ -14,7 +14,7 @@ The latest release version of MoneyPouch can be found on either
 * [SpigotMC](https://www.spigotmc.org/resources/21905/)
 * [Songoda](https://songoda.com/marketplace/product/540)
 
-Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew build``.
+Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew shadowJar``.
 
 ### Maven
 You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
@@ -28,7 +28,7 @@ You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#L
 <dependency>
     <groupId>com.github.LMBishop</groupId>
     <artifactId>MoneyPouch</artifactId>
-    <version>-SNAPSHOT</version>
+    <version>master-SNAPSHOT</version>
 <dependency>
 ```
 

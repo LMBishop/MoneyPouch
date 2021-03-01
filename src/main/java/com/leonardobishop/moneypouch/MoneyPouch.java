@@ -18,6 +18,7 @@ import com.leonardobishop.moneypouch.itemgetter.ItemGetter_Late_1_8;
 import com.leonardobishop.moneypouch.title.Title;
 import com.leonardobishop.moneypouch.title.Title_Bukkit;
 import com.leonardobishop.moneypouch.title.Title_BukkitNoTimings;
+import com.leonardobishop.moneypouch.title.Title_BukkitReflect;
 import com.leonardobishop.moneypouch.title.Title_Other;
 import org.apache.commons.lang.StringUtils;
 import org.bstats.bukkit.MetricsLite;
@@ -78,7 +79,7 @@ public class MoneyPouch extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        executeVersionSpecificActions();
+        this.executeVersionSpecificActions();
 
         File directory = new File(String.valueOf(this.getDataFolder()));
         if (!directory.exists() && !directory.isDirectory()) {
@@ -138,8 +139,6 @@ public class MoneyPouch extends JavaPlugin {
             }
         }
 
-        this.setupTitle();
-
         MetricsLite metrics = new MetricsLite(this, 9927);
         if (metrics.isEnabled()) {
             super.getLogger().info("Metrics started. This can be disabled at /plugins/bStats/config.yml.");
@@ -194,6 +193,7 @@ public class MoneyPouch extends JavaPlugin {
         } catch (ArrayIndexOutOfBoundsException e) {
             getLogger().warning("Failed to resolve server version - some features will not work!");
             itemGetter = new ItemGetter_Late_1_8();
+            titleHandle = new Title_Other();
             return;
         }
 
@@ -205,6 +205,14 @@ public class MoneyPouch extends JavaPlugin {
             itemGetter = new ItemGetter_1_13();
         } else {
             itemGetter = new ItemGetterLatest();
+        }
+
+        if (version.startsWith("v1_7")) {
+            titleHandle = new Title_Other();
+        } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
+            titleHandle = new Title_BukkitReflect();
+        } else {
+            titleHandle = new Title_Bukkit();
         }
     }
 
@@ -318,32 +326,6 @@ public class MoneyPouch extends JavaPlugin {
 
     public ItemStack getItemStack(String path, FileConfiguration config) {
         return itemGetter.getItem(path, config, this);
-    }
-
-    private void setupTitle() {
-        String version;
-        try {
-            version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            titleHandle = new Title_Bukkit();
-            this.getLogger().info("Your server version could not be detected. Titles have been enabled, although they may not work!");
-            return;
-        }
-        getLogger().info("Your server is running version " + version + ".");
-        if (version.startsWith("v1_7")) {
-            titleHandle = new Title_Other();
-        } else if (version.startsWith("v1_8") || version.startsWith("v1_9") || version.startsWith("v1_10")) {
-            titleHandle = new Title_BukkitNoTimings();
-        } else {
-            titleHandle = new Title_Bukkit();
-        }
-        if (titleHandle instanceof Title_Bukkit) {
-            this.getLogger().info("Titles have been enabled.");
-        } else if (titleHandle instanceof Title_BukkitNoTimings) {
-            this.getLogger().info("Titles have been enabled, although they have limited timings.");
-        } else {
-            this.getLogger().info("Titles are not supported for this version.");
-        }
     }
 
     public enum Message {

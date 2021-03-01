@@ -1,9 +1,10 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group = 'com.leonardobishop'
-version = '3.4'
+version = '3.5'
 
 processResources {
     from(sourceSets.main.resources.srcDirs) {
@@ -35,6 +36,10 @@ dependencies {
         exclude group: 'org.spongepowered'
         exclude group: 'co.aikar'
     }
+}
+
+shadowJar {
+    relocate 'org.bstats', 'com.leonardobishop.moneypouch.bstats'
 }
 
 compileJava {
