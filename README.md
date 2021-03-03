@@ -16,8 +16,8 @@ The latest release version of MoneyPouch can be found on either
 
 Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew shadowJar``.
 
-### Maven
 You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
+### Maven
 ```xml
 <repository>
     <id>jitpack.io</id>
@@ -33,7 +33,6 @@ You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#L
 ```
 
 ### Gradle
-You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
 ```groovy
 repositories {
     maven { url = 'https://jitpack.io' }
@@ -60,17 +59,29 @@ For support please open a [GitHub issue](https://github.com/LMBishop/MoneyPouch/
 Please speak English and do not use any vulgar or harmful language. We work on this project in our free time, getting mad at us if things do not work will not achieve anything.
 
 ## License
-The **source code** for MoneyPouch is licensed under the MIT License, to view the license click [here](https://github.com/LMBishop/MoneyPouch/blob/master/LICENSE).
+The **source code** for MoneyPouch is licensed under the GNU General Public License v3.0, to view the license click [here](https://github.com/LMBishop/MoneyPouch/blob/master/LICENSE.txt).
 
 The **artwork** for MoneyPouch is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License ![](https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png), to learn more click [here](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ## Configuration Assistance
 The configuration documentation can be found at the [wiki](https://github.com/LMBishop/MoneyPouch/wiki/Config).
 
-## Contributing To MoneyPouch
-We welcome all contributions :)
+## Contributing
+We welcome all contributions, we will check out all pull requests and determine if it should be added to Quests
+### Guidance
+* ensure Java 8 is installed on your machine
+* fork this repository and clone it
+* edit the source code as your please
+* run ``gradlew shadowJar`` in the base directory to build Quests
+* push to your fork when ready & submit a pull request
 
 ### Contribution Guidelines
-Please be consistent with the code style in the rest of the file. For large breaking changes, it may also be wise to discuss these beforehand.
+If you plan on contributing upstream please note the following:
+* discuss large changes first
+* indent the file with **4 spaces**
+* take a look at how the rest of the project is formatted and follow that
+* do not alter the version number in ``build.gradle``, that will be done when the release version is ready
+* limit the first line of commit messages to ~50 chars and leave a space below that
+* **test your changes** on the latest Spigot version before making a pull request
 
-Make sure your changes actually work before submitting a pull request by building the project and testing it on a Spigot server using the latest version.
+By contributing to MoneyPouch you agree to license your code under the [GNU General Public License v3.0](https://github.com/LMBishop/MoneyPouch/blob/master/LICENSE.txt).
