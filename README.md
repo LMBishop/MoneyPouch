@@ -67,9 +67,12 @@ The **artwork** for MoneyPouch is licensed under the Creative Commons Attributio
 The configuration documentation can be found at the [wiki](https://github.com/LMBishop/MoneyPouch/wiki/Config).
 
 ## Contributing
-We welcome all contributions, we will check out all pull requests and determine if it should be added to Quests
+We welcome all contributions, we will check out all pull requests and determine if it should be added to MoneyPouch. 
+
+Assistance of all forms is appreciated 🙂
+
 ### Guidance
-* ensure Java 8 is installed on your machine
+* ensure Java 8 is installed on your machine (release versions are compiled against Java 8)
 * fork this repository and clone it
 * edit the source code as your please
 * run ``gradlew shadowJar`` in the base directory to build Quests
