@@ -75,7 +75,7 @@ Assistance of all forms is appreciated 🙂
 * ensure Java 8 is installed on your machine (release versions are compiled against Java 8)
 * fork this repository and clone it
 * edit the source code as your please
-* run ``gradlew shadowJar`` in the base directory to build Quests
+* run ``gradlew shadowJar`` in the base directory to build MoneyPouch
 * push to your fork when ready & submit a pull request
 
 ### Contribution Guidelines
