@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 
-public class UseEvent_1_9_Plus extends UseEvent implements Listener {
+public class UseEventLatest extends UseEvent implements Listener {
 
-    public UseEvent_1_9_Plus(MoneyPouch plugin) {
+    public UseEventLatest(MoneyPouch plugin) {
         super(plugin);
     }
 
@@ -38,10 +38,8 @@ public class UseEvent_1_9_Plus extends UseEvent implements Listener {
                     }
 
                     if (opening.contains(player.getUniqueId())) {
-                        if (opening.contains(player.getUniqueId())) {
-                            player.sendMessage(plugin.getMessage(MoneyPouch.Message.ALREADY_OPENING));
-                            return;
-                        }
+                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.ALREADY_OPENING));
+                        return;
                     }
 
                     String permission = "moneypouch.pouches." + p.getId();
