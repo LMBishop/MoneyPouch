@@ -23,8 +23,8 @@ import java.util.logging.Level;
 
 public class UseEvent implements Listener {
 
-    private final MoneyPouch plugin;
-    private final ArrayList<UUID> opening = new ArrayList<>();
+    protected final MoneyPouch plugin;
+    protected final ArrayList<UUID> opening = new ArrayList<>();
 
     public UseEvent(MoneyPouch plugin) {
         this.plugin = plugin;
@@ -72,13 +72,13 @@ public class UseEvent implements Listener {
         }
     }
 
-    private void playSound(Player player, String name) {
+    protected void playSound(Player player, String name) {
         try {
             player.playSound(player.getLocation(), Sound.valueOf(name), 3, 1);
         } catch (Exception ignored) { }
     }
 
-    private void usePouch(Player player, Pouch p) {
+    protected void usePouch(Player player, Pouch p) {
         opening.add(player.getUniqueId());
         long random = ThreadLocalRandom.current().nextLong(p.getMinRange(), p.getMaxRange());
         playSound(player, plugin.getConfig().getString("pouches.sound.opensound"));
