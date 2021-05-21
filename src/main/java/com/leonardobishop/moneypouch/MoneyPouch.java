@@ -10,6 +10,7 @@ import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
 import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
 import com.leonardobishop.moneypouch.economytype.XPEconomyType;
 import com.leonardobishop.moneypouch.events.UseEvent;
+import com.leonardobishop.moneypouch.events.UseEvent_1_9_Plus;
 import com.leonardobishop.moneypouch.gui.MenuController;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetter;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetterLatest;
@@ -195,7 +196,7 @@ public class MoneyPouch extends JavaPlugin {
         super.getServer().getPluginCommand("moneypouch").setExecutor(new MoneyPouchBaseCommand(this));
         super.getServer().getPluginCommand("moneypouchshop").setExecutor(new MoneyPouchShopCommand(this));
         super.getServer().getPluginCommand("moneypouchadmin").setExecutor(new MoneyPouchAdminCommand(this));
-        super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
+
         super.getServer().getPluginManager().registerEvents(menuController, this);
 
         Bukkit.getScheduler().runTask(this, this::reload);
@@ -237,6 +238,12 @@ public class MoneyPouch extends JavaPlugin {
             titleHandle = new Title_BukkitReflect(this);
         } else {
             titleHandle = new Title_Bukkit();
+        }
+
+        if (version.startsWith("v1_7") || version.startsWith("v1_8")) {
+            super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
+        } else {
+            super.getServer().getPluginManager().registerEvents(new UseEvent_1_9_Plus(this), this);
         }
     }
 
