@@ -1,4 +1,4 @@
-package com.leonardobishop.moneypouch.exceptions;
+package com.leonardobishop.moneypouch.exception;
 
 public class PaymentFailedException extends RuntimeException {
 

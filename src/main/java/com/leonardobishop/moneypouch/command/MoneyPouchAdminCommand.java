@@ -1,4 +1,4 @@
-package com.leonardobishop.moneypouch.commands;
+package com.leonardobishop.moneypouch.command;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;

@@ -1,4 +1,4 @@
-package com.leonardobishop.moneypouch.events;
+package com.leonardobishop.moneypouch.listener;
 
 import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;

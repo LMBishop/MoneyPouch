@@ -1,6 +1,6 @@
 package com.leonardobishop.moneypouch.economytype;
 
-import com.leonardobishop.moneypouch.exceptions.PaymentFailedException;
+import com.leonardobishop.moneypouch.exception.PaymentFailedException;
 import org.bukkit.entity.Player;
 
 /**
