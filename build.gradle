@@ -6,11 +6,26 @@ plugins {
 group = 'com.leonardobishop'
 version = '3.6'
 
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include 'plugin.yml'
-        expand('version': project.version)
+defaultTasks 'shadowJar'
+
+tasks {
+    processResources {
+        filesMatching("**/plugin.yml") {
+            expand('version': project.version)
+        }
+
+        outputs.upToDateWhen { false }
     }
+
+    shadowJar {
+        relocate 'org.bstats', 'com.leonardobishop.moneypouch.bstats'
+    }
+
+    compileJava {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
 }
 
 repositories {
@@ -40,13 +55,4 @@ dependencies {
     }
     // AuthLib
     compileOnly 'com.mojang:authlib:1.5.21'
-}
-
-shadowJar {
-    relocate 'org.bstats', 'com.leonardobishop.moneypouch.bstats'
-}
-
-compileJava {
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
 }

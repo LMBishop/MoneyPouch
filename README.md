@@ -10,11 +10,10 @@
 This plugin allows you to create pouches, which contain a random amount of money.
 
 ## Downloads/Building
-The latest release version of MoneyPouch can be found on either
+The latest release version of MoneyPouch can be found on
 * [SpigotMC](https://www.spigotmc.org/resources/21905/)
-* [Songoda](https://songoda.com/marketplace/product/540)
 
-Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew shadowJar``.
+Alternatively, you can build MoneyPouch via Gradle from source using ``gradlew``.
 
 You can include MoneyPouch in your project using [JitPack](https://jitpack.io/#LMBishop/MoneyPouch):
 ### Maven
@@ -75,7 +74,7 @@ Assistance of all forms is appreciated 🙂
 * ensure Java 8 is installed on your machine (release versions are compiled against Java 8)
 * fork this repository and clone it
 * edit the source code as your please
-* run ``gradlew shadowJar`` in the base directory to build MoneyPouch
+* run ``gradlew`` in the base directory to build MoneyPouch
 * push to your fork when ready & submit a pull request
 
 ### Contribution Guidelines

@@ -26,38 +26,7 @@ public class UseListenerLatest extends UseListener implements Listener {
         }
 
         if (event.getHand() == EquipmentSlot.HAND) {
-            for (Pouch p : plugin.getPouches()) {
-                if (p.getItemStack().isSimilar(player.getInventory().getItemInMainHand())) {
-                    event.setCancelled(true);
-
-                    if (p.getEconomyType() instanceof InvalidEconomyType
-                            && plugin.getConfig().getBoolean("error-handling" +
-                            ".prevent-opening-invalid-pouches", true)) {
-                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.INVALID_POUCH));
-                        return;
-                    }
-
-                    if (opening.contains(player.getUniqueId())) {
-                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.ALREADY_OPENING));
-                        return;
-                    }
-
-                    String permission = "moneypouch.pouches." + p.getId();
-                    if (p.isPermissionRequired() && !player.hasPermission(permission)) {
-                        player.sendMessage(plugin.getMessage(MoneyPouch.Message.NO_PERMISSION));
-                        return;
-                    }
-
-                    if (player.getInventory().getItemInMainHand().getAmount() == 1) {
-                        player.getInventory().setItemInMainHand(null);
-                    } else {
-                        player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
-                        player.updateInventory();
-                    }
-
-                    super.usePouch(player, p);
-                }
-            }
+            onRightClickInMainHand(player, event);
         } else {
             for (Pouch p : super.plugin.getPouches()) {
                 if (p.getItemStack().isSimilar(player.getInventory().getItemInOffHand())) {
