@@ -204,6 +204,7 @@ public class MoneyPouch extends JavaPlugin {
 
         this.updater = new Updater(this, super.getDescription().getVersion(), true);
 
+        Bukkit.getScheduler().runTaskAsynchronously(this, updater::check);
         Bukkit.getScheduler().runTask(this, this::reload);
     }
 
