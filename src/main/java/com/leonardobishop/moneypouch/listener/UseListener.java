@@ -21,12 +21,12 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
-public class UseEvent implements Listener {
+public class UseListener implements Listener {
 
     protected final MoneyPouch plugin;
     protected final ArrayList<UUID> opening = new ArrayList<>();
 
-    public UseEvent(MoneyPouch plugin) {
+    public UseListener(MoneyPouch plugin) {
         this.plugin = plugin;
     }
 

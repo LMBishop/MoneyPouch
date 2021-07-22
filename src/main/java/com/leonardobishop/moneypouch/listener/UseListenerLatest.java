@@ -11,9 +11,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 
-public class UseEventLatest extends UseEvent implements Listener {
+public class UseListenerLatest extends UseListener implements Listener {
 
-    public UseEventLatest(MoneyPouch plugin) {
+    public UseListenerLatest(MoneyPouch plugin) {
         super(plugin);
     }
 

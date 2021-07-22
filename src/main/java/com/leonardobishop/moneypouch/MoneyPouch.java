@@ -9,8 +9,9 @@ import com.leonardobishop.moneypouch.economytype.InvalidEconomyType;
 import com.leonardobishop.moneypouch.economytype.LemonMobCoinsEconomyType;
 import com.leonardobishop.moneypouch.economytype.VaultEconomyType;
 import com.leonardobishop.moneypouch.economytype.XPEconomyType;
-import com.leonardobishop.moneypouch.listener.UseEvent;
-import com.leonardobishop.moneypouch.listener.UseEventLatest;
+import com.leonardobishop.moneypouch.listener.JoinListener;
+import com.leonardobishop.moneypouch.listener.UseListener;
+import com.leonardobishop.moneypouch.listener.UseListenerLatest;
 import com.leonardobishop.moneypouch.gui.MenuController;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetter;
 import com.leonardobishop.moneypouch.itemgetter.ItemGetterLatest;
@@ -20,6 +21,7 @@ import com.leonardobishop.moneypouch.title.Title;
 import com.leonardobishop.moneypouch.title.Title_Bukkit;
 import com.leonardobishop.moneypouch.title.Title_BukkitReflect;
 import com.leonardobishop.moneypouch.title.Title_Other;
+import com.leonardobishop.moneypouch.updater.Updater;
 import org.apache.commons.lang.StringUtils;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
@@ -51,11 +53,12 @@ import java.util.Map;
 public class MoneyPouch extends JavaPlugin {
     private final ArrayList<Pouch> pouches = new ArrayList<>();
 
-    private final HashMap<String, EconomyType> economyTypes = new HashMap<>();
+    private final Map<String, EconomyType> economyTypes = new HashMap<>();
 
     private Title titleHandle;
     private ItemGetter itemGetter;
     private MenuController menuController;
+    private Updater updater;
 
     /**
      * Gets a registered {@link EconomyType} with a specified ID.
@@ -75,7 +78,7 @@ public class MoneyPouch extends JavaPlugin {
      *
      * @return {@code Map<String, EconomyType>} of economy types - the key is the ID
      */
-    public HashMap<String, EconomyType> getEconomyTypes() {
+    public Map<String, EconomyType> getEconomyTypes() {
         return economyTypes;
     }
 
@@ -197,6 +200,9 @@ public class MoneyPouch extends JavaPlugin {
         super.getServer().getPluginCommand("moneypouchadmin").setExecutor(new MoneyPouchAdminCommand(this));
 
         super.getServer().getPluginManager().registerEvents(menuController, this);
+        super.getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+
+        this.updater = new Updater(this, super.getDescription().getVersion(), true);
 
         Bukkit.getScheduler().runTask(this, this::reload);
     }
@@ -208,6 +214,10 @@ public class MoneyPouch extends JavaPlugin {
 
     public Title getTitleHandle() {
         return titleHandle;
+    }
+
+    public Updater getUpdater() {
+        return updater;
     }
 
     private void executeVersionSpecificActions() {
@@ -240,9 +250,9 @@ public class MoneyPouch extends JavaPlugin {
         }
 
         if (version.startsWith("v1_7") || version.startsWith("v1_8")) {
-            super.getServer().getPluginManager().registerEvents(new UseEvent(this), this);
+            super.getServer().getPluginManager().registerEvents(new UseListener(this), this);
         } else {
-            super.getServer().getPluginManager().registerEvents(new UseEventLatest(this), this);
+            super.getServer().getPluginManager().registerEvents(new UseListenerLatest(this), this);
         }
     }
 
