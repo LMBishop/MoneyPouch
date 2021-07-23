@@ -74,7 +74,7 @@ public class ItemGetter_Late_1_8 implements ItemGetter {
         ItemMeta ism = is.getItemMeta();
 
         // skull
-        if (is.getType() == Material.PLAYER_HEAD) {
+        if (is.getType().toString().equals("SKULL_ITEM")) {
             SkullMeta sm = (SkullMeta) ism;
             String cOwnerBase64 = config.getString(path + "owner-base64");
             String cOwnerUsername = config.getString(path + "owner-username");
