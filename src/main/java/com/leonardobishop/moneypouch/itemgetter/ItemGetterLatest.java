@@ -100,10 +100,14 @@ public class ItemGetterLatest implements ItemGetter {
                         try {
                             profileMethod = sm.getClass().getDeclaredMethod("setProfile", GameProfile.class);
                             profileMethod.setAccessible(true);
-                            profileMethod.invoke(sm, profile);
-                        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                        } catch (NoSuchMethodException e) {
                             e.printStackTrace();
                         }
+                    }
+                    try {
+                        profileMethod.invoke(sm, profile);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
             }
