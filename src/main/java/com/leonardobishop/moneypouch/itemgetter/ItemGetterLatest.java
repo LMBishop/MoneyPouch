@@ -81,9 +81,9 @@ public class ItemGetterLatest implements ItemGetter {
         // skull
         if (is.getType() == Material.PLAYER_HEAD) {
             SkullMeta sm = (SkullMeta) ism;
-            String cOwnerBase64 = config.getString(path + "owner-base64");
-            String cOwnerUsername = config.getString(path + "owner-username");
-            String cOwnerUuid = config.getString(path + "owner-uuid");
+            String cOwnerBase64 = config.getString(path + ".owner-base64");
+            String cOwnerUsername = config.getString(path + ".owner-username");
+            String cOwnerUuid = config.getString(path + ".owner-uuid");
             if (cOwnerBase64 != null || cOwnerUsername != null || cOwnerUuid != null) {
                 if (cOwnerUsername != null) {
                     sm.setOwner(cOwnerUsername);
