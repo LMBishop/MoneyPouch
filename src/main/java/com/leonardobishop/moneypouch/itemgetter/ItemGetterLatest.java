@@ -18,6 +18,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.UUID;
 
 public class ItemGetterLatest implements ItemGetter {
 
-    private Field profileField;
+    private Method profileMethod;
 
     /*
      supporting:
@@ -92,20 +94,16 @@ public class ItemGetterLatest implements ItemGetter {
                         sm.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(cOwnerUuid)));
                     } catch (IllegalArgumentException ignored) { }
                 } else {
-                    GameProfile profile = new GameProfile(UUID.randomUUID(), "");
+                    GameProfile profile = new GameProfile(UUID.randomUUID(), null);
                     profile.getProperties().put("textures", new Property("textures", cOwnerBase64));
-                    if (profileField == null) {
+                    if (profileMethod == null) {
                         try {
-                            profileField = sm.getClass().getDeclaredField("profile");
-                            profileField.setAccessible(true);
-                        } catch (NoSuchFieldException e) {
+                            profileMethod = sm.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+                            profileMethod.setAccessible(true);
+                            profileMethod.invoke(sm, profile);
+                        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                             e.printStackTrace();
                         }
-                    }
-                    try {
-                        profileField.set(sm, profile);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
                     }
                 }
             }
