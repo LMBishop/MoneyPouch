@@ -4,12 +4,12 @@ import com.leonardobishop.moneypouch.MoneyPouch;
 import com.leonardobishop.moneypouch.Pouch;
 import com.leonardobishop.moneypouch.economytype.InvalidEconomyType;
 import com.leonardobishop.moneypouch.title.Title_Other;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -18,7 +18,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -74,7 +73,7 @@ public class UseListener implements Listener {
                     player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
                     player.updateInventory();
                 }
-
+                Bukkit.broadcast(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("messages.admin-broadcast").replace("%player%", player.getPlayerListName())), "moneypouch.admin.alert");
                 usePouch(player, p);
             }
         }
