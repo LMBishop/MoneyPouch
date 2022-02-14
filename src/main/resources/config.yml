@@ -134,3 +134,4 @@ messages:
   purchase-error: "&cCould not complete transaction for %item%&c."
   shop-disabled: "&cThe pouch shop is disabled."
   no-permission: "&cYou cannot open this pouch."
+  admin-broadcast: "&6%player% is opening a Money Pouch."
